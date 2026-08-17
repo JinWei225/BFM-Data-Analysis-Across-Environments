@@ -111,44 +111,96 @@ describe_features <- function(data, cols) {
   return(stats_table)
 }
 
+# Directory for all saved figures
+fig_dir <- "results/figures"
+dir.create(fig_dir, recursive = TRUE, showWarnings = FALSE)
+
 # Histogram Plot of Features in Open Environment Before and After Data Cleaning
+png(file.path(fig_dir, "hist_open_Mean_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_open, "Open", "Mean_Magnitude", xlim = c(0,22), ylim = c(0, 35000))
+dev.off()
+png(file.path(fig_dir, "hist_open_Std_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_open, "Open", "Std_Magnitude", ylim = c(0, 35000))
+dev.off()
+png(file.path(fig_dir, "hist_open_Mean_Phase.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_open, "Open", "Mean_Phase", xlim = c(-5, 4), ylim = c(0, 40000))
+dev.off()
+png(file.path(fig_dir, "hist_open_Phase_Coherence.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_open, "Open", "Phase_Coherence", xlim = c(0.6,1), ylim = c(0, 35000), by = 0.1)
+dev.off()
 
 df_open_clean <- remove_outliers_iqr(df_open, "Mean_Magnitude")
 
+png(file.path(fig_dir, "hist_open_clean_Mean_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_open_clean, "Cleaned Open", "Mean_Magnitude", xlim = c(10, 22), ylim = c(0, 35000))
+dev.off()
+png(file.path(fig_dir, "hist_open_clean_Std_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_open_clean, "Cleaned Open", "Std_Magnitude", ylim = c(0, 35000))
+dev.off()
+png(file.path(fig_dir, "hist_open_clean_Mean_Phase.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_open_clean, "Cleaned Open", "Mean_Phase",xlim = c(0.37, 0.42), ylim = c(0, 10000), by = 0.01)
+dev.off()
+png(file.path(fig_dir, "hist_open_clean_Phase_Coherence.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_open_clean, "Cleaned Open", "Phase_Coherence", xlim = c(0.98,1), ylim = c(0, 25000), by = 0.001)
+dev.off()
 
 # Histogram Plot of Features in Foil Environment Before and After Data Cleaning
+png(file.path(fig_dir, "hist_foil_Mean_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_foil, "Foil", "Mean_Magnitude", ylim = c(0, 6000))
+dev.off()
+png(file.path(fig_dir, "hist_foil_Std_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_foil, "Foil", "Std_Magnitude", xlim = c(0, 40), ylim = c(0, 6000))
+dev.off()
+png(file.path(fig_dir, "hist_foil_Mean_Phase.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_foil, "Foil", "Mean_Phase", xlim = c(-15, 15), ylim = c(0, 50000))
+dev.off()
+png(file.path(fig_dir, "hist_foil_Phase_Coherence.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_foil, "Foil", "Phase_Coherence", xlim = c(0,1), ylim = c(0, 50000))
+dev.off()
 
 df_foil_clean <- remove_outliers_iqr(df_foil, "Mean_Magnitude")
 
+png(file.path(fig_dir, "hist_foil_clean_Mean_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_foil_clean, "Cleaned Foil", "Mean_Magnitude", ylim = c(0, 4000))
+dev.off()
+png(file.path(fig_dir, "hist_foil_clean_Std_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_foil_clean, "Cleaned Foil", "Std_Magnitude", xlim = c(0, 40), ylim = c(0, 6000))
+dev.off()
+png(file.path(fig_dir, "hist_foil_clean_Mean_Phase.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_foil_clean, "Cleaned Foil", "Mean_Phase",xlim = c(0.26, 0.52), ylim = c(0, 5000), by = 0.01)
+dev.off()
+png(file.path(fig_dir, "hist_foil_clean_Phase_Coherence.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_foil_clean, "Cleaned Foil", "Phase_Coherence", xlim = c(0.90,1), ylim = c(0, 5000), by = 0.05)
+dev.off()
 
 # Histogram Plot of Features in No Foil Environment Before and After Data Cleaning
+png(file.path(fig_dir, "hist_nofoil_Mean_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_nofoil, "No Foil", "Mean_Magnitude", ylim = c(0, 15000))
+dev.off()
+png(file.path(fig_dir, "hist_nofoil_Std_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_nofoil, "No Foil", "Std_Magnitude", xlim = c(0, 40), ylim = c(0, 12000))
+dev.off()
+png(file.path(fig_dir, "hist_nofoil_Mean_Phase.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_nofoil, "No Foil", "Mean_Phase", xlim = c(-10, 10), ylim = c(0, 50000))
+dev.off()
+png(file.path(fig_dir, "hist_nofoil_Phase_Coherence.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_nofoil, "No Foil", "Phase_Coherence", xlim = c(0,1), ylim = c(0, 50000))
+dev.off()
 
 df_nofoil_clean <- remove_outliers_iqr(df_nofoil, "Mean_Magnitude")
 
+png(file.path(fig_dir, "hist_nofoil_clean_Mean_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_nofoil_clean, "Cleaned No Foil", "Mean_Magnitude", ylim = c(0, 10000))
+dev.off()
+png(file.path(fig_dir, "hist_nofoil_clean_Std_Magnitude.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_nofoil_clean, "Cleaned No Foil", "Std_Magnitude", xlim = c(0, 40), ylim = c(0, 12000))
+dev.off()
+png(file.path(fig_dir, "hist_nofoil_clean_Mean_Phase.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_nofoil_clean, "Cleaned No Foil", "Mean_Phase",xlim = c(0.31, 0.50), ylim = c(0, 10000), by = 0.01)
+dev.off()
+png(file.path(fig_dir, "hist_nofoil_clean_Phase_Coherence.png"), width = 8, height = 6, units = "in", res = 300)
 plot_histogram(df_nofoil_clean, "Cleaned No Foil", "Phase_Coherence", xlim = c(0.93,1), ylim = c(0, 15000), by = 0.01)
+dev.off()
 
 # Desciptive Analysis
 nrow(df_open_clean)
@@ -186,6 +238,7 @@ bar_data <- rbind(standing_counts, walking_counts)
 colnames(bar_data) <- c("Open", "Foil", "No Foil")
 rownames(bar_data) <- c("Standing", "Walking")
 
+png(file.path(fig_dir, "barplot_activity_counts.png"), width = 8, height = 6, units = "in", res = 300)
 par(mar = c(5, 4, 4, 8), xpd = TRUE)   # expand right margin to draw legend
 
 barplot(
@@ -203,6 +256,7 @@ barplot(
     bty = "n"
   )
 )
+dev.off()
 
 # SESSION-LEVEL AGGREGATION
 # Collapse each session to one row (mean of each feature).
@@ -324,6 +378,8 @@ for (fidx in seq_along(session_features)) {
     theme(legend.position = "none",
           strip.text = element_text(face = "bold"))
   print(p)
+  ggsave(file.path(fig_dir, paste0("violin_activity_", feat, ".png")),
+         plot = p, width = 10, height = 6, dpi = 300)
 }
 
 # Hypothesis tests (per environment)
@@ -405,6 +461,8 @@ for (feat in ts_features) {
       panel.grid.minor = element_blank()
     )
   print(p)
+  ggsave(file.path(fig_dir, paste0("timeseries_", feat, ".png")),
+         plot = p, width = 12, height = 6, dpi = 300)
 }
 
 # FEATURE ENGINEERING — SESSION-LEVEL TIME SERIES FEATURES
@@ -493,6 +551,8 @@ for (env in environments) {
       theme(legend.position = "none",
             strip.text = element_text(face = "bold"))
     print(p)
+    ggsave(file.path(fig_dir, paste0("violin_engineered_", env, "_", feat, ".png")),
+           plot = p, width = 8, height = 6, dpi = 300)
   }
 }
 
@@ -576,6 +636,8 @@ for (env in environments) {
       panel.grid = element_blank()
     )
   print(p)
+  ggsave(file.path(fig_dir, paste0("spearman_heatmap_", env, ".png")),
+         plot = p, width = 8, height = 6, dpi = 300)
 }
 
 
@@ -708,3 +770,5 @@ for (model_name in names(model_types)) {
 }
 
 print(cross_env_loso_results)
+
+write.csv(cross_env_loso_results, "results/loso_results.csv", row.names = FALSE)
