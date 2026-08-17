@@ -204,41 +204,6 @@ barplot(
   )
 )
 
-# Subject Data Distibution in Each Environment
-sum(df_open_clean$subject == "collin")
-sum(df_open_clean$subject == "kenny")
-sum(df_open_clean$subject == "matthew")
-sum(df_open_clean$subject == "abel")
-sum(df_open_clean$subject == "ivan")
-sum(df_open_clean$subject == "collin") / nrow(df_open_clean)
-sum(df_open_clean$subject == "kenny") / nrow(df_open_clean)
-sum(df_open_clean$subject == "matthew") / nrow(df_open_clean)
-sum(df_open_clean$subject == "abel") / nrow(df_open_clean)
-sum(df_open_clean$subject == "ivan") / nrow(df_open_clean)
-
-sum(df_foil_clean$subject == "collin")
-sum(df_foil_clean$subject == "kenny")
-sum(df_foil_clean$subject == "matthew")
-sum(df_foil_clean$subject == "abel")
-sum(df_foil_clean$subject == "ivan")
-sum(df_foil_clean$subject == "collin") / nrow(df_foil_clean)
-sum(df_foil_clean$subject == "kenny") / nrow(df_foil_clean)
-sum(df_foil_clean$subject == "matthew") / nrow(df_foil_clean)
-sum(df_foil_clean$subject == "abel") / nrow(df_foil_clean)
-sum(df_foil_clean$subject == "ivan") / nrow(df_foil_clean)
-
-sum(df_nofoil_clean$subject == "collin")
-sum(df_nofoil_clean$subject == "kenny")
-sum(df_nofoil_clean$subject == "matthew")
-sum(df_nofoil_clean$subject == "abel")
-sum(df_nofoil_clean$subject == "ivan")
-sum(df_nofoil_clean$subject == "collin") / nrow(df_nofoil_clean)
-sum(df_nofoil_clean$subject == "kenny") / nrow(df_nofoil_clean)
-sum(df_nofoil_clean$subject == "matthew") / nrow(df_nofoil_clean)
-sum(df_nofoil_clean$subject == "abel") / nrow(df_nofoil_clean)
-sum(df_nofoil_clean$subject == "ivan") / nrow(df_nofoil_clean)
-
-
 # SESSION-LEVEL AGGREGATION
 # Collapse each session to one row (mean of each feature).
 df_clean <- rbind(df_open_clean, df_foil_clean, df_nofoil_clean)
@@ -449,29 +414,23 @@ session_engineered <- df_clean %>%
   group_by(session_id, environment, activity) %>%
   arrange(timestamp, .by_group = TRUE) %>%
   summarise(
-    # Variance over time
-    var_mean_mag = var(Mean_Magnitude, na.rm = TRUE),
-    var_mean_pha = var(Mean_Phase, na.rm = TRUE),
-    var_std_mag = var(Std_Magnitude, na.rm = TRUE),
-    var_pha_coh = var(Phase_Coherence, na.rm = TRUE),
-    
     # Variance of rate of change
-    roc_var_mean_mag = {
+    var_roc_mean_mag = {
       dt <- as.numeric(diff(timestamp), units = "secs")
       dx <- diff(Mean_Magnitude)
       var(dx / dt, na.rm = TRUE)
     },
-    roc_var_mean_pha = {
+    var_roc_mean_pha = {
       dt <- as.numeric(diff(timestamp), units = "secs")
       dx <- diff(Mean_Phase)
       var(dx / dt, na.rm = TRUE)
     },
-    roc_var_std_mag  = {
+    var_roc_std_mag  = {
       dt <- as.numeric(diff(timestamp), units = "secs")
       dx <- diff(Std_Magnitude)
       var(dx / dt, na.rm = TRUE)
     },
-    roc_var_pha_coh  = {
+    var_roc_pha_coh  = {
       dt <- as.numeric(diff(timestamp), units = "secs")
       dx <- diff(Phase_Coherence)
       var(dx / dt, na.rm = TRUE)
@@ -481,10 +440,8 @@ session_engineered <- df_clean %>%
   mutate(activity_num = ifelse(activity == "walking", 1, 0))
 
 # Descriptive statistics for engineered features
-eng_features <- c("var_mean_mag", "var_mean_pha", "var_std_mag", "var_pha_coh",
-                  "roc_var_mean_mag", "roc_var_mean_pha", "roc_var_std_mag", "roc_var_pha_coh")
-eng_labels   <- c("Var(Mean_Mag)", "Var(Mean_Phase)", "Var(Std_Mag)", "Var(Phase_Coh)",
-                  "RoC_Var(Mean_Mag)", "RoC_Var(Mean_Phase)", "RoC_Var(Std_Mag)", "RoC_Var(Phase_Coh)")
+eng_features <- c("var_roc_mean_mag", "var_roc_mean_pha", "var_roc_std_mag", "var_roc_pha_coh")
+eng_labels   <- c("Var_Roc(Mean_Mag)", "Var_Roc(Mean_Phase)", "Var_Roc(Std_Mag)", "Var_Roc(Phase_Coh)")
 
 for (env in environments) {
   session_engineered_env <- df_clean %>%
@@ -492,27 +449,22 @@ for (env in environments) {
     group_by(session_id, environment, activity) %>%
     arrange(timestamp, .by_group = TRUE) %>%
     summarise(
-      var_mean_mag = var(Mean_Magnitude, na.rm = TRUE),
-      var_mean_pha = var(Mean_Phase, na.rm = TRUE),
-      var_std_mag = var(Std_Magnitude, na.rm = TRUE),
-      var_pha_coh = var(Phase_Coherence, na.rm = TRUE),
-      
-      roc_var_mean_mag = {
+      var_roc_mean_mag = {
         dt <- as.numeric(diff(timestamp), units = "secs")
         dx <- diff(Mean_Magnitude)
         var(dx / dt, na.rm = TRUE)
       },
-      roc_var_mean_pha = {
+      var_roc_mean_pha = {
         dt <- as.numeric(diff(timestamp), units = "secs")
         dx <- diff(Mean_Phase)
         var(dx / dt, na.rm = TRUE)
       },
-      roc_var_std_mag  = {
+      var_roc_std_mag  = {
         dt <- as.numeric(diff(timestamp), units = "secs")
         dx <- diff(Std_Magnitude)
         var(dx / dt, na.rm = TRUE)
       },
-      roc_var_pha_coh  = {
+      var_roc_pha_coh  = {
         dt <- as.numeric(diff(timestamp), units = "secs")
         dx <- diff(Phase_Coherence)
         var(dx / dt, na.rm = TRUE)
@@ -583,7 +535,7 @@ for (env in environments) {
 }
 
 # Variance Inflation Factor (VIF)
-vif_model <- lm(activity_num ~ roc_var_mean_mag + roc_var_mean_pha + roc_var_std_mag + roc_var_pha_coh, data = session_engineered)
+vif_model <- lm(activity_num ~ var_roc_mean_mag + var_roc_mean_pha + var_roc_std_mag + var_roc_pha_coh, data = session_engineered)
 
 vif_values <- vif(vif_model)
 print(vif_values)
@@ -593,12 +545,12 @@ for (env in environments) {
   sub <- session_engineered[session_engineered$environment == env, ]
   
   cor_matrix <- cor(
-    sub[, c("roc_var_mean_mag", "roc_var_mean_pha", "roc_var_std_mag", "roc_var_pha_coh", "activity_num")],
+    sub[, c("var_roc_mean_mag", "var_roc_mean_pha", "var_roc_std_mag", "var_roc_pha_coh", "activity_num")],
     method = "spearman"
   )
   
   rownames(cor_matrix) <- colnames(cor_matrix) <-
-    c("RoC_Var(Mean_Mag)", "RoC_Var(Mean_Phase)", "RoC_Var(Std_Mag)", "RoC_Var(Phase_Coh)", "Activity")
+    c("var_roc(Mean_Mag)", "var_roc(Mean_Phase)", "var_roc(Std_Mag)", "var_roc(Phase_Coh)", "Activity")
   
   cor_long <- as.data.frame(as.table(cor_matrix))
   names(cor_long) <- c("Var1", "Var2", "Correlation")
@@ -626,275 +578,6 @@ for (env in environments) {
   print(p)
 }
 
-# Minimum and maximum values of roc_var_pha_coh in all three environments
-min(session_engineered[session_engineered$environment == "open", ]$roc_var_pha_coh)
-min(session_engineered[session_engineered$environment == "foil", ]$roc_var_pha_coh)
-min(session_engineered[session_engineered$environment == "nofoil", ]$roc_var_pha_coh)
-max(session_engineered[session_engineered$environment == "open", ]$roc_var_pha_coh)
-max(session_engineered[session_engineered$environment == "foil", ]$roc_var_pha_coh)
-max(session_engineered[session_engineered$environment == "nofoil", ]$roc_var_pha_coh)
-
-# Apply Min-Max Scaling on chosen feature
-chosen_eng_data_scaled <- df_clean %>%
-  group_by(session_id, environment, activity, subject) %>%
-  arrange(timestamp, .by_group = TRUE) %>%
-  summarise(
-    roc_var_pha_coh = {
-      dt <- as.numeric(diff(timestamp), units = "secs")
-      dx <- diff(Phase_Coherence)
-      var(dx / dt, na.rm = TRUE)
-    },
-    .groups = "drop"
-  ) %>%
-  mutate(
-    roc_var_pha_coh_scaled = (roc_var_pha_coh - min(roc_var_pha_coh, na.rm = TRUE)) / 
-      (max(roc_var_pha_coh, na.rm = TRUE) - min(roc_var_pha_coh, na.rm = TRUE)),
-    activity_num = ifelse(activity == "walking", 1, 0),
-    activity_factor = factor(activity, levels = c("standing", "walking"))
-  )
-
-# Normality Assumption checking + Hypothesis Tests on Chosen Feature
-for (env in environments) {
-  cat("\n========== Environment:", toupper(env), "==========\n")
-  sub <- chosen_eng_data_scaled[chosen_eng_data_scaled$environment == env, ]
-  feat <- "roc_var_pha_coh_scaled"
-  cat("\nRoC_Var(Phase_Coh)_scaled\n")
-  
-  x_stand <- sub[sub$activity == "standing", feat, drop = TRUE]
-  x_walk <- sub[sub$activity == "walking",  feat, drop = TRUE]
-  
-  sw_s <- shapiro.test(x_stand)
-  sw_w <- shapiro.test(x_walk)
-  
-  cat(sprintf("Shapiro-Wilk standing : W = %.4f, p = %.4f %s\n",
-              sw_s$statistic, sw_s$p.value,
-              ifelse(sw_s$p.value > 0.05, "(normal)", "(NON-normal)")))
-  cat(sprintf("Shapiro-Wilk walking  : W = %.4f, p = %.4f %s\n",
-              sw_w$statistic, sw_w$p.value,
-              ifelse(sw_w$p.value > 0.05, "(normal)", "(NON-normal)")))
-  
-  both_normal <- sw_s$p.value > 0.05 && sw_w$p.value > 0.05
-  
-  if (both_normal) {
-    tt <- t.test(x_stand, x_walk, var.equal = FALSE)
-    cat(sprintf("Welch's t-test        : t = %.4f, df = %.2f, p = %.4f\n",
-                tt$statistic, tt$parameter, tt$p.value))
-  } else {
-    wx <- wilcox.test(x_stand, x_walk, exact = FALSE)
-    cat(sprintf("Wilcoxon rank-sum     : W = %.0f, p = %.4f\n",
-                wx$statistic, wx$p.value))
-  }
-}
-
-
-# LOSO CROSS-VALIDATION
-subjects <- c("collin", "kenny", "abel", "matthew", "ivan")
-
-# Store all results across models and environments
-all_results <- data.frame()
-
-for (env in environments) {
-  session_data <- df_clean %>%
-    filter(environment == env) %>%
-    group_by(session_id, activity, subject) %>%
-    arrange(timestamp, .by_group = TRUE) %>%
-    summarise(
-      roc_var_pha_coh = {
-        dt <- as.numeric(diff(timestamp), units = "secs")
-        dx <- diff(Phase_Coherence)
-        var(dx / dt, na.rm = TRUE)
-      },
-      .groups = "drop"
-    ) %>%
-    mutate(
-      roc_var_pha_coh_scaled = (roc_var_pha_coh - min(roc_var_pha_coh, na.rm = TRUE)) / 
-        (max(roc_var_pha_coh, na.rm = TRUE) - min(roc_var_pha_coh, na.rm = TRUE)),
-      activity_num = ifelse(activity == "walking", 1, 0),
-      activity_factor = factor(activity, levels = c("standing", "walking"))
-    )
-  
-  for (test_subject in subjects) {
-    train <- session_data[session_data$subject != test_subject, ]
-    test <- session_data[session_data$subject == test_subject, ]
-    
-    actual_factor <- factor(test$activity_factor,
-                            levels = c("standing", "walking"))
-    
-    # Logistic Regression
-    lr_model <- glm(activity_num ~ roc_var_pha_coh_scaled,
-                    data = train, family = "binomial")
-    lr_probs <- predict(lr_model, newdata = test, type = "response")
-    lr_pred <- factor(ifelse(lr_probs > 0.5, "walking", "standing"),
-                       levels = c("standing", "walking"))
-    lr_cm <- caret::confusionMatrix(lr_pred, actual_factor, positive = "walking")
-    
-    # Decision Tree
-    dt_model <- rpart(activity_factor ~ roc_var_pha_coh_scaled,
-                      data = train, method = "class")
-    dt_pred <- predict(dt_model, newdata = test, type = "class")
-    dt_cm <- caret::confusionMatrix(dt_pred, actual_factor, positive = "walking")
-    
-    # Random Forest
-    rf_model <- randomForest(activity_factor ~ roc_var_pha_coh_scaled,
-                             data = train, ntree = 100)
-    rf_pred <- predict(rf_model, newdata = test)
-    rf_cm <- caret::confusionMatrix(rf_pred, actual_factor, positive = "walking")
-    
-    # SVM
-    svm_model <- svm(activity_factor ~ roc_var_pha_coh_scaled,
-                     data = train, kernel = "radial", probability = TRUE)
-    svm_pred <- predict(svm_model, newdata = test)
-    svm_cm <- caret::confusionMatrix(svm_pred, actual_factor, positive = "walking")
-    
-    # Save results per fold
-    fold_num <- match(test_subject, subjects)
-    
-    for (model_name in c("Logistic Regression", "Decision Tree",
-                         "Random Forest", "SVM")) {
-      cm <- switch(model_name,
-                   "Logistic Regression" = lr_cm,
-                   "Decision Tree" = dt_cm,
-                   "Random Forest" = rf_cm,
-                   "SVM" = svm_cm)
-      
-      all_results <- rbind(all_results, data.frame(
-        environment = env,
-        model = model_name,
-        fold = fold_num,
-        subject = test_subject,
-        accuracy = round(cm$overall["Accuracy"],    4),
-        sensitivity = round(cm$byClass["Sensitivity"], 4),
-        specificity = round(cm$byClass["Specificity"], 4)
-      ))
-    }
-  }
-}
-
-# Average metrics per model per environment
-loso_summary <- all_results %>%
-  group_by(environment, model) %>%
-  summarise(
-    mean_accuracy    = round(mean(accuracy),    4),
-    mean_sensitivity = round(mean(sensitivity), 4),
-    mean_specificity = round(mean(specificity), 4),
-    .groups = "drop"
-  ) %>%
-  arrange(environment, desc(mean_accuracy))
-
-cat("\n=== LOSO Summary (averaged across folds) ===\n")
-print(loso_summary)
-
-# Grouped bar chart: mean accuracy per model per environment
-ggplot(loso_summary,
-       aes(x = environment, y = mean_accuracy, fill = model)) +
-  geom_bar(stat = "identity", position = position_dodge(width = 0.8),
-           width = 0.7) +
-  geom_text(aes(label = round(mean_accuracy, 2)),
-            position = position_dodge(width = 0.8),
-            vjust = -0.4, size = 3) +
-  scale_fill_manual(values = c(
-    "Logistic Regression" = "steelblue",
-    "Decision Tree" = "tomato",
-    "Random Forest" = "seagreen",
-    "SVM" = "darkorange"
-  )) +
-  scale_y_continuous(limits = c(0, 1.1)) +
-  labs(
-    title = "LOSO Mean Accuracy by Model and Environment",
-    x = "Environment",
-    y = "Mean Accuracy",
-    fill = "Model"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-
-# Grouped bar chart: mean sensitivity per model per environment
-ggplot(loso_summary,
-       aes(x = environment, y = mean_sensitivity, fill = model)) +
-  geom_bar(stat = "identity", position = position_dodge(width = 0.8),
-           width = 0.7) +
-  geom_text(aes(label = round(mean_sensitivity, 2)),
-            position = position_dodge(width = 0.8),
-            vjust = -0.4, size = 3) +
-  scale_fill_manual(values = c(
-    "Logistic Regression" = "steelblue",
-    "Decision Tree" = "tomato",
-    "Random Forest" = "seagreen",
-    "SVM" = "darkorange"
-  )) +
-  scale_y_continuous(limits = c(0, 1.1)) +
-  labs(
-    title = "LOSO Mean Sensitivity by Model and Environment",
-    x = "Environment",
-    y = "Mean Sensitivity",
-    fill = "Model"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-
-# Grouped bar chart: mean specificity per model per environment
-ggplot(loso_summary,
-       aes(x = environment, y = mean_specificity, fill = model)) +
-  geom_bar(stat = "identity", position = position_dodge(width = 0.8),
-           width = 0.7) +
-  geom_text(aes(label = round(mean_specificity, 2)),
-            position = position_dodge(width = 0.8),
-            vjust = -0.4, size = 3) +
-  scale_fill_manual(values = c(
-    "Logistic Regression" = "steelblue",
-    "Decision Tree" = "tomato",
-    "Random Forest" = "seagreen",
-    "SVM" = "darkorange"
-  )) +
-  scale_y_continuous(limits = c(0, 1.1)) +
-  labs(
-    title = "LOSO Mean Specificity by Model and Environment",
-    x = "Environment",
-    y = "Mean Specificity",
-    fill = "Model"
-  ) +
-  theme_minimal() +
-  theme(legend.position = "bottom")
-
-# Box plot + violin plot to understand the distribution of scaled data
-for (env in environments) {
-  session_engineered_scaled <- df_clean %>%
-    filter(environment == env) %>%
-    group_by(session_id, environment, activity, subject) %>%
-    arrange(timestamp, .by_group = TRUE) %>%
-    summarise(
-      roc_var_pha_coh = {
-        dt <- as.numeric(diff(timestamp), units = "secs")
-        dx <- diff(Phase_Coherence)
-        var(dx / dt, na.rm = TRUE)
-      },
-      .groups = "drop"
-    ) %>%
-    mutate(
-      roc_var_pha_coh_scaled = (roc_var_pha_coh - min(roc_var_pha_coh, na.rm = TRUE)) / 
-        (max(roc_var_pha_coh, na.rm = TRUE) - min(roc_var_pha_coh, na.rm = TRUE)),
-      activity_num = ifelse(activity == "walking", 1, 0),
-      activity_factor = factor(activity, levels = c("standing", "walking"))
-    )
-  p <- ggplot(session_engineered_scaled,
-              aes(x = activity, y = .data[["roc_var_pha_coh_scaled"]], fill = activity)) +
-    geom_violin(trim = FALSE, alpha = 0.7) +
-    geom_boxplot(width = 0.15, outlier.shape = NA,
-                 fill = "white", alpha = 0.6) +
-    stat_summary(fun = mean, geom = "point",
-                 shape = 18, size = 3, color = "black") +
-    facet_wrap(~ environment, nrow = 1) +
-    scale_fill_manual(values = c(standing = "steelblue", walking = "tomato")) +
-    labs(
-      title = paste("Standing vs Walking —", "RoC_Var(Phase_Coh)_Scaled",
-                    "(session-level)"),
-      x = "Activity", y = "RoC_Var(Phase_Coh)_Scaled"
-    ) +
-    theme_minimal() +
-    theme(legend.position = "none",
-          strip.text = element_text(face = "bold"))
-  print(p)
-}
 
 # Build session-level features (unscaled) for each environment.
 # Min-max scaling is applied per LOSO fold below, using the training
@@ -905,7 +588,7 @@ build_session_data <- function(env) {
     group_by(session_id, activity, subject) %>%
     arrange(timestamp, .by_group = TRUE) %>%
     summarise(
-      roc_var_pha_coh = {
+      var_roc_pha_coh = {
         dt <- as.numeric(diff(timestamp), units = "secs")
         dx <- diff(Phase_Coherence)
         var(dx / dt, na.rm = TRUE)
@@ -941,10 +624,10 @@ subjects <- c("collin", "kenny", "abel", "matthew", "ivan")
 # Fit a classifier of the given type on a (already scaled) training fold
 fit_model <- function(model_type, train_data) {
   switch(model_type,
-    "lr"   = glm(activity_num ~ roc_var_pha_coh_scaled, data = train_data, family = "binomial"),
-    "tree" = rpart(activity_factor ~ roc_var_pha_coh_scaled, data = train_data, method = "class"),
-    "rf"   = randomForest(activity_factor ~ roc_var_pha_coh_scaled, data = train_data, ntree = 100),
-    "svm"  = svm(activity_factor ~ roc_var_pha_coh_scaled, data = train_data, kernel = "radial", probability = TRUE)
+    "lr"   = glm(activity_num ~ var_roc_pha_coh_scaled, data = train_data, family = "binomial"),
+    "tree" = rpart(activity_factor ~ var_roc_pha_coh_scaled, data = train_data, method = "class"),
+    "rf"   = randomForest(activity_factor ~ var_roc_pha_coh_scaled, data = train_data, ntree = 100),
+    "svm"  = svm(activity_factor ~ var_roc_pha_coh_scaled, data = train_data, kernel = "radial", probability = TRUE)
   )
 }
 
@@ -969,8 +652,6 @@ for (model_name in names(model_types)) {
 
   for (train_label in env_labels) {
     for (test_label in env_labels) {
-      if (train_label == test_label) next
-
       fold_metrics <- data.frame()
 
       for (test_subject in subjects) {
@@ -986,10 +667,10 @@ for (model_name in names(model_types)) {
         if (length(unique(actual_factor)) < 2) next
 
         # Min-max scale using the training fold's own range only
-        train_min <- min(train_fold$roc_var_pha_coh, na.rm = TRUE)
-        train_max <- max(train_fold$roc_var_pha_coh, na.rm = TRUE)
-        train_fold$roc_var_pha_coh_scaled <- (train_fold$roc_var_pha_coh - train_min) / (train_max - train_min)
-        test_fold$roc_var_pha_coh_scaled  <- (test_fold$roc_var_pha_coh - train_min) / (train_max - train_min)
+        train_min <- min(train_fold$var_roc_pha_coh, na.rm = TRUE)
+        train_max <- max(train_fold$var_roc_pha_coh, na.rm = TRUE)
+        train_fold$var_roc_pha_coh_scaled <- (train_fold$var_roc_pha_coh - train_min) / (train_max - train_min)
+        test_fold$var_roc_pha_coh_scaled  <- (test_fold$var_roc_pha_coh - train_min) / (train_max - train_min)
 
         model <- fit_model(model_type, train_fold)
         probs <- predict_walking_prob(model, model_type, test_fold)

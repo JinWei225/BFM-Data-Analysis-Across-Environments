@@ -1,0 +1,37 @@
+"model","train_environment","test_environment","accuracy","sensitivity","specificity","n_folds"
+"Logistic Regression","Open","Open",1,1,1,5
+"Logistic Regression","Open","Foil",0.54,1,0.08,5
+"Logistic Regression","Open","No Foil",0.76,1,0.52,5
+"Logistic Regression","Foil","Open",0.5,0,1,5
+"Logistic Regression","Foil","Foil",0.82,0.84,0.8,5
+"Logistic Regression","Foil","No Foil",0.74,0.48,1,5
+"Logistic Regression","No Foil","Open",0.56,0.12,1,5
+"Logistic Regression","No Foil","Foil",0.84,0.96,0.72,5
+"Logistic Regression","No Foil","No Foil",0.66,0.56,0.76,5
+"Decision Tree","Open","Open",1,1,1,5
+"Decision Tree","Open","Foil",0.52,1,0.04,5
+"Decision Tree","Open","No Foil",0.76,1,0.52,5
+"Decision Tree","Foil","Open",0.5,0,1,5
+"Decision Tree","Foil","Foil",0.82,0.84,0.8,5
+"Decision Tree","Foil","No Foil",0.74,0.48,1,5
+"Decision Tree","No Foil","Open",0.8,0.6,1,5
+"Decision Tree","No Foil","Foil",0.58,1,0.16,5
+"Decision Tree","No Foil","No Foil",0.54,0.56,0.52,5
+"Random Forest","Open","Open",1,1,1,5
+"Random Forest","Open","Foil",0.52,1,0.04,5
+"Random Forest","Open","No Foil",0.76,1,0.52,5
+"Random Forest","Foil","Open",0.58,0.16,1,5
+"Random Forest","Foil","Foil",0.8,0.8,0.8,5
+"Random Forest","Foil","No Foil",0.7,0.4,1,5
+"Random Forest","No Foil","Open",0.84,0.68,1,5
+"Random Forest","No Foil","Foil",0.66,1,0.32,5
+"Random Forest","No Foil","No Foil",0.7,0.52,0.88,5
+"SVM","Open","Open",0.98,0.96,1,5
+"SVM","Open","Foil",0.54,1,0.08,5
+"SVM","Open","No Foil",0.78,1,0.56,5
+"SVM","Foil","Open",0.5,0,1,5
+"SVM","Foil","Foil",0.8,0.76,0.84,5
+"SVM","Foil","No Foil",0.68,0.36,1,5
+"SVM","No Foil","Open",0.54,0.08,1,5
+"SVM","No Foil","Foil",0.88,0.96,0.8,5
+"SVM","No Foil","No Foil",0.72,0.52,0.92,5
