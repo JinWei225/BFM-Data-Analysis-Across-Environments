@@ -5,7 +5,8 @@
 | File | Description |
 | --- | --- |
 | `Source Code_v1.0.0.R` | Full analysis pipeline (data cleaning → EDA → hypothesis testing → feature engineering → LOSO classification). |
-| `loso_results.csv` | Final classification results: mean Accuracy / Sensitivity / Specificity for every (model, train environment, test environment) combination under leave-one-subject-out cross-validation. |
+| `results` | Directory that stores the figures generated and final classification results: mean Accuracy / Sensitivity / Specificity for every (model, train environment, test environment) combination under leave-one-subject-out cross-validation. |
+| `data` | Directory that provides link and description for the public dataset used in the study. |
 
 ---
 
