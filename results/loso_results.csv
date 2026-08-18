@@ -30,8 +30,8 @@
 "SVM","Open","Foil",0.54,1,0.08,5
 "SVM","Open","No Foil",0.78,1,0.56,5
 "SVM","Foil","Open",0.5,0,1,5
-"SVM","Foil","Foil",0.8,0.76,0.84,5
+"SVM","Foil","Foil",0.78,0.76,0.8,5
 "SVM","Foil","No Foil",0.68,0.36,1,5
-"SVM","No Foil","Open",0.54,0.08,1,5
+"SVM","No Foil","Open",0.56,0.12,1,5
 "SVM","No Foil","Foil",0.88,0.96,0.8,5
 "SVM","No Foil","No Foil",0.72,0.52,0.92,5
