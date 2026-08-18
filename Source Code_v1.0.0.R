@@ -247,14 +247,17 @@ barplot(
   col = c("steelblue", "tomato"),
   main = "Activity Counts Across Environments",
   xlab = "Environment",
-  ylab = "Count",
-  legend.text = rownames(bar_data),
-  args.legend = list(
-    x = par("usr")[2] + 1.5,
-    y = par("usr")[4],
-    xpd = TRUE,
-    bty = "n"
-  )
+  ylab = "Count"
+)
+
+# Legend drawn after the bars so par("usr") holds this plot's coordinates
+legend(
+  x = par("usr")[2] + 0.3,
+  y = par("usr")[4],
+  legend = rownames(bar_data),
+  fill = c("steelblue", "tomato"),
+  xpd = TRUE,
+  bty = "n"
 )
 dev.off()
 
