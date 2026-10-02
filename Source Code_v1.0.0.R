@@ -14,6 +14,9 @@ library(InformationValue)
 # Load the dataset
 df <- read.csv("bfm_data.csv")
 
+# Total number of rows in dataset
+nrow(df)
+
 # Check for missing values
 colSums(is.na(df))
 
@@ -87,11 +90,10 @@ remove_outliers_iqr <- function(data, x_col) {
   Q3 <- quantile(x, 0.75, na.rm = TRUE)
   IQR_val <- Q3 - Q1
   lower_fence <- Q1 - 1.5 * IQR_val
-  upper_fence <- Q3 + 1.5 * IQR_val
   
   cat("Lower fence:", lower_fence, "\n")
   cat("Number of values below lower fence:", sum(x < lower_fence, na.rm = TRUE), "\n")
-  cat("Percentage of values dropped:", round(sum(x < lower_fence, na.rm = TRUE) / length(x) * 100, 2))
+  cat("Percentage of values dropped:", round(sum(x < lower_fence, na.rm = TRUE) / length(x) * 100, 2), "\n")
   cleaned_data <- data[x >= lower_fence, ]
   return(cleaned_data)
 }
@@ -479,6 +481,13 @@ for (feat in ts_features) {
 }
 
 # FEATURE ENGINEERING — SESSION-LEVEL TIME SERIES FEATURES
+
+# Function to calculate variance of rate of change of features
+var_roc <- function(x, t) {
+  dt <- as.numeric(diff(t), units = "secs")
+  var(diff(x) / dt, na.rm = TRUE)
+}
+
 raw_features <- c("Mean_Magnitude", "Mean_Phase", "Std_Magnitude", "Phase_Coherence")
 
 session_engineered <- df_clean %>%
@@ -486,26 +495,10 @@ session_engineered <- df_clean %>%
   arrange(timestamp, .by_group = TRUE) %>%
   summarise(
     # Variance of rate of change
-    var_roc_mean_mag = {
-      dt <- as.numeric(diff(timestamp), units = "secs")
-      dx <- diff(Mean_Magnitude)
-      var(dx / dt, na.rm = TRUE)
-    },
-    var_roc_mean_pha = {
-      dt <- as.numeric(diff(timestamp), units = "secs")
-      dx <- diff(Mean_Phase)
-      var(dx / dt, na.rm = TRUE)
-    },
-    var_roc_std_mag  = {
-      dt <- as.numeric(diff(timestamp), units = "secs")
-      dx <- diff(Std_Magnitude)
-      var(dx / dt, na.rm = TRUE)
-    },
-    var_roc_pha_coh  = {
-      dt <- as.numeric(diff(timestamp), units = "secs")
-      dx <- diff(Phase_Coherence)
-      var(dx / dt, na.rm = TRUE)
-    },
+    var_roc_mean_mag = var_roc(Mean_Magnitude, timestamp),
+    var_roc_mean_pha = var_roc(Mean_Phase, timestamp),
+    var_roc_std_mag  = var_roc(Std_Magnitude, timestamp),
+    var_roc_pha_coh  = var_roc(Phase_Coherence, timestamp),
     .groups = "drop"
   ) %>%
   mutate(activity_num = ifelse(activity == "walking", 1, 0))
@@ -520,26 +513,10 @@ for (env in environments) {
     group_by(session_id, environment, activity) %>%
     arrange(timestamp, .by_group = TRUE) %>%
     summarise(
-      var_roc_mean_mag = {
-        dt <- as.numeric(diff(timestamp), units = "secs")
-        dx <- diff(Mean_Magnitude)
-        var(dx / dt, na.rm = TRUE)
-      },
-      var_roc_mean_pha = {
-        dt <- as.numeric(diff(timestamp), units = "secs")
-        dx <- diff(Mean_Phase)
-        var(dx / dt, na.rm = TRUE)
-      },
-      var_roc_std_mag  = {
-        dt <- as.numeric(diff(timestamp), units = "secs")
-        dx <- diff(Std_Magnitude)
-        var(dx / dt, na.rm = TRUE)
-      },
-      var_roc_pha_coh  = {
-        dt <- as.numeric(diff(timestamp), units = "secs")
-        dx <- diff(Phase_Coherence)
-        var(dx / dt, na.rm = TRUE)
-      },
+      var_roc_mean_mag = var_roc(Mean_Magnitude, timestamp),
+      var_roc_mean_pha = var_roc(Mean_Phase, timestamp),
+      var_roc_std_mag  = var_roc(Std_Magnitude, timestamp),
+      var_roc_pha_coh  = var_roc(Phase_Coherence, timestamp),
       .groups = "drop"
     )
   
@@ -660,21 +637,35 @@ for (env in environments) {
          plot = p, width = 11, height = 8, dpi = 300)
 }
 
+# Changes based on reviewer comment starts here
 
-# Build session-level features (unscaled) for each environment.
-# Min-max scaling is applied per LOSO fold below, using the training
-# set's own min/max, so it happens AFTER the train/test split.
-build_session_data <- function(env) {
-  df_clean %>%
-    filter(environment == env) %>%
-    group_by(session_id, activity, subject) %>%
+# Set random seed so that the results are reproducible
+set.seed(42)
+
+subjects <- sort(unique(df$subject))
+envs <- c("open", "foil", "nofoil")
+env_labels <- c(open = "Open", foil = "Foil", nofoil = "No Foil")
+potential_features <- c("var_roc_mean_mag", "var_roc_mean_pha", 
+                        "var_roc_std_mag", "var_roc_pha_coh")
+model_types <- c("Logistic Regression" = "lr", "Decision Tree" = "tree",
+                 "Random Forest" = "rf", "SVM" = "svm")
+
+lower_fence <- function(x) {
+  Q1 <- quantile(x, 0.25, na.rm = TRUE)
+  Q3 <- quantile(x, 0.75, na.rm = TRUE)
+  IQR_val <- Q3 - Q1
+  unname(Q1 - 1.5 * IQR_val)
+}
+
+build_session_features <- function(packets) {
+  packets %>%
+    group_by(session_id, environment, activity, subject) %>%
     arrange(timestamp, .by_group = TRUE) %>%
     summarise(
-      var_roc_pha_coh = {
-        dt <- as.numeric(diff(timestamp), units = "secs")
-        dx <- diff(Phase_Coherence)
-        var(dx / dt, na.rm = TRUE)
-      },
+      var_roc_mean_mag = var_roc(Mean_Magnitude, timestamp),
+      var_roc_mean_pha = var_roc(Mean_Phase, timestamp),
+      var_roc_std_mag  = var_roc(Std_Magnitude, timestamp),
+      var_roc_pha_coh  = var_roc(Phase_Coherence, timestamp),
       .groups = "drop"
     ) %>%
     mutate(
@@ -683,33 +674,33 @@ build_session_data <- function(env) {
     )
 }
 
-session_data_open   <- build_session_data("open")
-session_data_foil   <- build_session_data("foil")
-session_data_nofoil <- build_session_data("nofoil")
 
-session_data_by_env <- list(
-  "Open"    = session_data_open,
-  "Foil"    = session_data_foil,
-  "No Foil" = session_data_nofoil
-)
+prepare_env_fold <- function(env, test_subject) {
+  env_packets <- df[df$environment == env, ]
+  train_packets <- env_packets[env_packets$subject != test_subject, ]
+  fence <- lower_fence(train_packets$Mean_Magnitude)
+  keep <- env_packets$Mean_Magnitude >= fence
+  removed <- env_packets$Mean_Magnitude < fence
+  pct_removed <- tapply(removed, env_packets$subject, mean) * 100
+  cat("Fence:", round(fence, 2), "| % of packets removed per subject:\n")
+  print(round(pct_removed, 2))
+  sessions <- build_session_features(env_packets[keep, ])
+  return(list(sessions = sessions, fence = fence, removed = pct_removed))
+}
 
-subjects <- c("collin", "kenny", "abel", "matthew", "ivan")
-
-
-# CROSS-ENVIRONMENT LOSO EVALUATION — LOGISTIC REGRESSION, DECISION TREE, RANDOM FOREST, SVM
-# For each model and each ordered pair of (train environment, test environment),
-# run leave-one-subject-out CV: train on all subjects but one in the train
-# environment (min-max scaled on the training fold only), test on the held-out
-# subject's data from the test environment (scaled with the training fold's
-# min/max), then average Accuracy / Sensitivity / Specificity across subjects.
+select_feature <- function(train_sessions) {
+  rho <- sapply(potential_features, function(f)
+    cor(train_sessions[[f]], train_sessions$activity_num, method = "spearman"))
+  list(feature = names(which.max(abs(rho))), rho = rho)
+}
 
 # Fit a classifier of the given type on a (already scaled) training fold
 fit_model <- function(model_type, train_data) {
   switch(model_type,
-    "lr"   = glm(activity_num ~ var_roc_pha_coh_scaled, data = train_data, family = "binomial"),
-    "tree" = rpart(activity_factor ~ var_roc_pha_coh_scaled, data = train_data, method = "class"),
-    "rf"   = randomForest(activity_factor ~ var_roc_pha_coh_scaled, data = train_data, ntree = 100),
-    "svm"  = svm(activity_factor ~ var_roc_pha_coh_scaled, data = train_data, kernel = "radial", probability = TRUE)
+    "lr"   = glm(activity_num ~ x_scaled, data = train_data, family = "binomial"),
+    "tree" = rpart(activity_factor ~ x_scaled, data = train_data, method = "class"),
+    "rf"   = randomForest(activity_factor ~ x_scaled, data = train_data, ntree = 100),
+    "svm"  = svm(activity_factor ~ x_scaled, data = train_data, kernel = "radial", probability = TRUE)
   )
 }
 
@@ -723,46 +714,95 @@ predict_walking_prob <- function(model, model_type, newdata) {
   )
 }
 
-model_types <- c("Logistic Regression" = "lr", "Decision Tree" = "tree",
-                  "Random Forest" = "rf", "SVM" = "svm")
-env_labels <- c("Open", "Foil", "No Foil")
+pred_log <- list()
+fold_info <- list()
 
-cross_env_loso_results <- data.frame()
+for (test_subject in subjects) {
+  env_tab <- lapply(setNames(envs, envs), prepare_env_fold, test_subject = test_subject)
+  fold_info[[test_subject]] <- list(
+    fence = sapply(env_tab, function(e) e$fence),
+    removed = lapply(env_tab, function(e) e$removed),
+    chosen = list(), rho = list()
+  )
+  
+  for (train_env in envs) {
+    train <- env_tab[[train_env]]$sessions
+    train <- train[train$subject != test_subject, ]
+    
+    selection <- select_feature(train)
+    fold_info[[test_subject]]$chosen[[train_env]] <- selection$feature
+    fold_info[[test_subject]]$rho[[train_env]] <- selection$rho
+    
+    low <- min(train[[selection$feature]])
+    high <- max(train[[selection$feature]])
+    train$x_scaled <- (train[[selection$feature]] - low) / (high - low)
+    train$activity_factor <- factor(train$activity, levels = c("standing", "walking"))
+    
+    for (model_name in names(model_types)) {
+      model_type <- model_types[[model_name]]
+      model <- fit_model(model_type, train)
+      
+      for (test_env in envs) {
+        test <- env_tab[[test_env]]$sessions
+        test <- test[test$subject == test_subject, ]
+        test$x_scaled <- (test[[selection$feature]] - low) / (high - low)
+        test$activity_factor <- factor(test$activity, levels = c("standing", "walking"))
+        
+        probs <- predict_walking_prob(model, model_type, test)
+        
+        pred_log[[length(pred_log) + 1]] <- data.frame(
+          test_subject = test_subject,
+          model = model_name, 
+          train_env = train_env,
+          test_env = test_env, 
+          selected_feature = selection$feature,
+          session_id = test$session_id,
+          actual = test$activity_factor,
+          prob = unname(probs),
+          pred = factor(ifelse(probs > 0.5, "walking", "standing"),
+                        levels = c("standing", "walking"))
+        )
+      }
+    }
+  }
+}
+
+removal_table <- do.call(rbind, lapply(subjects, function(s) {
+  do.call(rbind, lapply(envs, function(e) {
+    p <- fold_info[[s]]$removed[[e]]
+    data.frame(held_out = s,
+               environment = e,
+               fence = round(unname(fold_info[[s]]$fence[e]), 2),
+               subject = names(p),
+               pct_removed = as.numeric(p))
+  }))
+}))
+
+removal_table
+
+pred_log <- do.call(rbind, pred_log)
+
+fold_metrics_all <- data.frame()
 
 for (model_name in names(model_types)) {
-  model_type <- model_types[[model_name]]
-
-  for (train_label in env_labels) {
-    for (test_label in env_labels) {
+  for (train_env in envs) {
+    for (test_env in envs) {
       fold_metrics <- data.frame()
 
       for (test_subject in subjects) {
-        train_fold <- session_data_by_env[[train_label]]
-        train_fold <- train_fold[train_fold$subject != test_subject, ]
-        test_fold  <- session_data_by_env[[test_label]]
-        test_fold  <- test_fold[test_fold$subject == test_subject, ]
-
-        if (nrow(train_fold) == 0 || nrow(test_fold) == 0) next
-        if (length(unique(train_fold$activity_factor)) < 2) next
-
-        actual_factor <- factor(test_fold$activity_factor, levels = c("standing", "walking"))
-        if (length(unique(actual_factor)) < 2) next
-
-        # Min-max scale using the training fold's own range only
-        train_min <- min(train_fold$var_roc_pha_coh, na.rm = TRUE)
-        train_max <- max(train_fold$var_roc_pha_coh, na.rm = TRUE)
-        train_fold$var_roc_pha_coh_scaled <- (train_fold$var_roc_pha_coh - train_min) / (train_max - train_min)
-        test_fold$var_roc_pha_coh_scaled  <- (test_fold$var_roc_pha_coh - train_min) / (train_max - train_min)
-
-        model <- fit_model(model_type, train_fold)
-        probs <- predict_walking_prob(model, model_type, test_fold)
-        pred  <- factor(ifelse(probs > 0.5, "walking", "standing"), levels = c("standing", "walking"))
-        cm    <- caret::confusionMatrix(pred, actual_factor, positive = "walking")
+        d <- pred_log[pred_log$model == model_name &
+                      pred_log$train_env == train_env &
+                      pred_log$test_env == test_env &
+                      pred_log$test_subject == test_subject, ]
+        cm    <- caret::confusionMatrix(d$pred, d$actual, positive = "walking")
 
         fold_metrics <- rbind(fold_metrics, data.frame(
+          test_subject = test_subject,
           accuracy    = as.numeric(cm$overall["Accuracy"]),
           sensitivity = as.numeric(cm$byClass["Sensitivity"]),
-          specificity = as.numeric(cm$byClass["Specificity"])
+          specificity = as.numeric(cm$byClass["Specificity"]),
+          f1_score = as.numeric(cm$byClass["F1"]),
+          balanced_accuracy = as.numeric(cm$byClass["Balanced Accuracy"])
         ))
       }
 
@@ -771,24 +811,19 @@ for (model_name in names(model_types)) {
       mean_specificity <- round(mean(fold_metrics$specificity, na.rm = TRUE), 4)
 
       cat(sprintf("\n%s trained in %s Environment (LOSO), tested with %s environment data (%d/%d folds):\n",
-                  model_name, train_label, test_label, nrow(fold_metrics), length(subjects)))
+                  model_name, env_labels[[train_env]], env_labels[[test_env]], nrow(fold_metrics), length(subjects)))
       cat("Mean Accuracy: ", mean_accuracy,
           " Mean Sensitivity: ", mean_sensitivity,
           " Mean Specificity: ", mean_specificity, "\n")
 
-      cross_env_loso_results <- rbind(cross_env_loso_results, data.frame(
-        model             = model_name,
-        train_environment = train_label,
-        test_environment  = test_label,
-        accuracy          = mean_accuracy,
-        sensitivity       = mean_sensitivity,
-        specificity       = mean_specificity,
-        n_folds           = nrow(fold_metrics)
+      fold_metrics_all <- rbind(fold_metrics_all, data.frame(
+        model = model_name,
+        train_environment = env_labels[[train_env]],
+        test_environment = env_labels[[test_env]],
+        fold_metrics
       ))
     }
   }
 }
 
-print(cross_env_loso_results)
-
-write.csv(cross_env_loso_results, "results/loso_results.csv", row.names = FALSE)
+write.csv(fold_metrics_all, "results/loso_fold_results.csv", row.names = FALSE)
