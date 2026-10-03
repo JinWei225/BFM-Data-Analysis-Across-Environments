@@ -14,8 +14,9 @@ library(InformationValue)
 # Load the dataset
 df <- read.csv("bfm_data.csv")
 
-# Total number of rows in dataset
+# Total number of rows and columns in dataset
 nrow(df)
+length(df)
 
 # Check for missing values
 colSums(is.na(df))
@@ -650,6 +651,9 @@ potential_features <- c("var_roc_mean_mag", "var_roc_mean_pha",
 model_types <- c("Logistic Regression" = "lr", "Decision Tree" = "tree",
                  "Random Forest" = "rf", "SVM" = "svm")
 
+FENCE_MODE    <- "train-only"
+FIXED_FEATURE <- NULL
+
 lower_fence <- function(x) {
   Q1 <- quantile(x, 0.25, na.rm = TRUE)
   Q3 <- quantile(x, 0.75, na.rm = TRUE)
@@ -677,8 +681,12 @@ build_session_features <- function(packets) {
 
 prepare_env_fold <- function(env, test_subject) {
   env_packets <- df[df$environment == env, ]
-  train_packets <- env_packets[env_packets$subject != test_subject, ]
-  fence <- lower_fence(train_packets$Mean_Magnitude)
+  if (FENCE_MODE == "all") {
+    fence <- lower_fence(env_packets$Mean_Magnitude)
+  } else {
+    train_packets <- env_packets[env_packets$subject != test_subject, ]
+    fence <- lower_fence(train_packets$Mean_Magnitude)
+  }
   keep <- env_packets$Mean_Magnitude >= fence
   removed <- env_packets$Mean_Magnitude < fence
   pct_removed <- tapply(removed, env_packets$subject, mean) * 100
@@ -691,7 +699,11 @@ prepare_env_fold <- function(env, test_subject) {
 select_feature <- function(train_sessions) {
   rho <- sapply(potential_features, function(f)
     cor(train_sessions[[f]], train_sessions$activity_num, method = "spearman"))
-  list(feature = names(which.max(abs(rho))), rho = rho)
+  if (!is.null(FIXED_FEATURE)) 
+    chosen <- FIXED_FEATURE 
+  else 
+    chosen <- names(which.max(abs(rho)))
+  list(feature = chosen, rho = rho)
 }
 
 # Fit a classifier of the given type on a (already scaled) training fold
@@ -767,6 +779,8 @@ for (test_subject in subjects) {
   }
 }
 
+pred_log <- do.call(rbind, pred_log)
+
 removal_table <- do.call(rbind, lapply(subjects, function(s) {
   do.call(rbind, lapply(envs, function(e) {
     p <- fold_info[[s]]$removed[[e]]
@@ -780,7 +794,19 @@ removal_table <- do.call(rbind, lapply(subjects, function(s) {
 
 removal_table
 
-pred_log <- do.call(rbind, pred_log)
+feature_selection_table <- do.call(rbind, lapply(subjects, function(s) {
+  chosen <- fold_info[[s]]$chosen          # named list: one entry per training environment
+  rho    <- fold_info[[s]]$rho
+  rho_mat <- t(sapply(names(chosen), function(e) round(rho[[e]], 2)))
+  
+  data.frame(test_subject     = s,
+             train_env        = names(chosen),
+             selected_feature = unlist(chosen, use.names = FALSE),
+             rho_mat,
+             row.names = NULL)
+}))
+
+feature_selection_table
 
 fold_metrics_all <- data.frame()
 
@@ -798,6 +824,7 @@ for (model_name in names(model_types)) {
 
         fold_metrics <- rbind(fold_metrics, data.frame(
           test_subject = test_subject,
+          selected_feature = unique(d$selected_feature),
           accuracy    = as.numeric(cm$overall["Accuracy"]),
           sensitivity = as.numeric(cm$byClass["Sensitivity"]),
           specificity = as.numeric(cm$byClass["Specificity"]),
