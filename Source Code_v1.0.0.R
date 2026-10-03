@@ -65,6 +65,16 @@ sum(df$environment == "foil") / nrow(df)
 sum(df$environment == "nofoil") / nrow(df)
 sum(df$environment == "open") / nrow(df)
 
+# Table of number of sessions per environment, subject and activity (raw data, before outlier removal)
+sessions_per_subject <- df %>%
+  group_by(environment, subject, activity) %>%
+  summarise(n_sessions = n_distinct(session_id), .groups = "drop") %>%
+  arrange(factor(environment, levels = c("open", "foil", "nofoil")), subject, activity)
+
+dir.create("results", showWarnings = FALSE)
+write.csv(sessions_per_subject, "results/sessions_per_subject.csv", row.names = FALSE)
+print(as.data.frame(sessions_per_subject), row.names = FALSE)
+
 # Function for Histogram of a Feature for an Environment
 plot_histogram <- function(data, env, x_col, xlim = c(0, 30), ylim = c(0, 50), breaks = 30, color = "steelblue", by = 1) {
   hist(
