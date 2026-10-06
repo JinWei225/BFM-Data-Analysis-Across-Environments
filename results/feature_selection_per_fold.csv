@@ -1,0 +1,16 @@
+"test_subject","train_env","selected_feature","n_tied","var_roc_mean_mag","var_roc_mean_pha","var_roc_std_mag","var_roc_pha_coh"
+"abel","open","var_roc_mean_mag / var_roc_mean_pha / var_roc_std_mag / var_roc_pha_coh",4,0.87,0.87,0.87,0.87
+"abel","foil","var_roc_mean_mag / var_roc_pha_coh",2,0.8,0.72,0.79,0.8
+"abel","nofoil","var_roc_mean_mag",1,0.76,0.57,0.57,0.67
+"collin","open","var_roc_mean_mag / var_roc_mean_pha / var_roc_std_mag / var_roc_pha_coh",4,0.87,0.87,0.87,0.87
+"collin","foil","var_roc_std_mag / var_roc_pha_coh",2,0.78,0.73,0.87,0.87
+"collin","nofoil","var_roc_mean_mag",1,0.59,0.54,0.5,0.5
+"ivan","open","var_roc_mean_mag / var_roc_mean_pha / var_roc_std_mag / var_roc_pha_coh",4,0.87,0.87,0.87,0.87
+"ivan","foil","var_roc_mean_pha / var_roc_std_mag / var_roc_pha_coh",3,0.78,0.79,0.79,0.79
+"ivan","nofoil","var_roc_mean_mag",1,0.71,0.54,0.59,0.64
+"kenny","open","var_roc_mean_mag / var_roc_mean_pha / var_roc_std_mag / var_roc_pha_coh",4,0.87,0.87,0.87,0.87
+"kenny","foil","var_roc_std_mag",1,0.68,0.62,0.76,0.71
+"kenny","nofoil","var_roc_mean_mag",1,0.66,0.62,0.54,0.63
+"matthew","open","var_roc_mean_mag / var_roc_mean_pha / var_roc_std_mag / var_roc_pha_coh",4,0.87,0.87,0.87,0.87
+"matthew","foil","var_roc_pha_coh",1,0.74,0.8,0.79,0.81
+"matthew","nofoil","var_roc_pha_coh",1,0.58,0.42,0.45,0.58

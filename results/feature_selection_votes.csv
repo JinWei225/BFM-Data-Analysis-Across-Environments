@@ -1,0 +1,5 @@
+"feature","votes","n_folds_top","mean_abs_rho"
+"var_roc_mean_mag",5.75,10,0.76
+"var_roc_pha_coh",4.58,10,0.755
+"var_roc_std_mag",3.08,8,0.732
+"var_roc_mean_pha",1.58,6,0.712

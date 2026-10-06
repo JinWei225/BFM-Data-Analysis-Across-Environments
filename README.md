@@ -4,7 +4,8 @@
 
 | File | Description |
 | --- | --- |
-| `Source Code_v1.0.0.R` | Full analysis pipeline (data cleaning → EDA → hypothesis testing → feature engineering → LOSO classification). |
+| `Analysis_v1.0.0.R` | Statistical analysis (preprocessing → outlier removal → descriptive analysis → hypothesis testing → feature engineering). Saves the packet-level features to `data/bfm_packet_features.rds`. |
+| `Modelling_v1.0.0.R` | Leave-one-subject-out (LOSO) classification. Reads `data/bfm_packet_features.rds`, so `Analysis_v1.0.0.R` must be run first. |
 | `results` | Directory that stores the figures generated and final classification results: mean Accuracy / Sensitivity / Specificity for every (model, train environment, test environment) combination under leave-one-subject-out cross-validation. |
 | `data` | Directory that provides link and description for the public dataset used in the study. |
 
@@ -15,19 +16,25 @@
 R with the following packages:
 
 ```r
-install.packages(c("lubridate", "ggplot2", "moments", "boot", "dunn.test",
-                   "car", "dplyr", "nlme", "caret", "rpart", "randomForest",
-                   "e1071", "InformationValue"))
+# Analysis_v1.0.0.R
+install.packages(c("lubridate", "ggplot2", "moments", "dunn.test", "car", "dplyr"))
+
+# Modelling_v1.0.0.R
+install.packages(c("dplyr", "tidyr", "caret", "rpart", "randomForest", "e1071"))
 ```
 
-Note: `InformationValue` has been archived on CRAN and may need to be installed
-from the archive or from source.
+Run order:
+
+```r
+source("Analysis_v1.0.0.R")
+source("Modelling_v1.0.0.R")
+```
 
 ---
 
 ## 3. Pipeline overview
 
-### 3.1 Preprocessing (lines 14–62)
+### 3.1 Preprocessing (`Analysis_v1.0.0.R`)
 
 1. Missing-value check across all columns.
 2. Timestamps converted from UTC to `Asia/Kuala_Lumpur` (MYT, UTC+08:00).
@@ -38,10 +45,11 @@ from the archive or from source.
    - `Mean_Phase` — row-wise mean of the subcarrier phases
    - `Phase_Coherence` — circular resultant length,
      `sqrt(mean(cos φ)² + mean(sin φ)²)`, bounded in [0, 1]
-5. The raw subcarrier and MAC-address columns are dropped; the data are split by
-   environment into `df_open`, `df_foil`, `df_nofoil`.
+5. The raw subcarrier and MAC-address columns are dropped and the packet-level
+   features are saved to `data/bfm_packet_features.rds` for `Modelling_v1.0.0.R`;
+   the data are split by environment into `df_open`, `df_foil`, `df_nofoil`.
 
-### 3.2 Outlier removal (lines 82–151)
+### 3.2 Outlier removal (`Analysis_v1.0.0.R`)
 
 `remove_outliers_iqr()` applies the standard IQR rule to `Mean_Magnitude` within
 each environment and retains rows at or above the lower fence
@@ -50,7 +58,7 @@ and the percentage dropped. Only the lower tail is trimmed, because the artefact
 of interest is drop-outs in reported magnitude. Histograms of all four features
 are plotted before and after cleaning for each environment.
 
-### 3.3 Descriptive analysis (lines 153–270)
+### 3.3 Descriptive analysis (`Analysis_v1.0.0.R`)
 
 - Per-environment row counts, activity proportions and per-subject counts /
   proportions.
@@ -62,24 +70,27 @@ are plotted before and after cleaning for each environment.
 - `describe_features()` produces the mean, median, standard deviation, skewness
   and kurtosis tables reported per environment.
 
-### 3.4 Assumption checks and hypothesis testing (lines 276–387)
+### 3.4 Assumption checks and hypothesis testing (`Analysis_v1.0.0.R`)
 
 - **Shapiro–Wilk** normality test per feature per environment.
 - **Levene's test** for homogeneity of variance across environments.
 - Because normality and equal variance are not jointly satisfied,
   **Kruskal–Wallis** is used to test for differences across the three
-  environments, followed by **Dunn's post-hoc** pairwise comparisons with
-  Bonferroni correction.
+  environments. Sessions from the same subject are not independent, so the
+  test is run **within each subject** (10 sessions per environment), with Holm
+  correction across subjects and epsilon-squared as the effect size. It is
+  followed by **Dunn's post-hoc** pairwise comparisons per subject with
+  Bonferroni correction (`kruskal_wallis_per_subject.csv`, `dunn_per_subject.csv`).
 - Standing vs. walking is compared within each environment using
   **Wilcoxon rank-sum** tests, accompanied by violin + box plots.
 
-### 3.5 Time-series inspection (lines 390–443)
+### 3.5 Time-series inspection (`Analysis_v1.0.0.R`)
 
 For each session, a 60-second window centred on the session midpoint is
 extracted and all four features are plotted against relative time, faceted by
 environment and coloured by activity.
 
-### 3.6 Feature engineering (lines 445–687)
+### 3.6 Feature engineering (`Analysis_v1.0.0.R`)
 
 Four session-level dynamic features are computed:
 
@@ -91,14 +102,20 @@ then Welch's t-test or Wilcoxon rank-sum depending on normality), screened for
 multicollinearity with the **variance inflation factor**, and visualised as
 Spearman correlation heatmaps against the activity label.
 
-`var_roc_pha_coh` — the variance of the rate of change of phase coherence — is
-selected as the single predictor carried into the classification stage, and is
-min–max scaled.
+### 3.7 Leave-one-subject-out (LOSO) classification (`Modelling_v1.0.0.R`)
 
-### 3.7 Leave-one-subject-out (LOSO) classification (lines 690–1029)
+The single predictor is chosen by Spearman correlation in two steps:
 
-Four classifiers are evaluated, each using `var_roc_pha_coh_scaled` as the sole
-predictor and `activity` (standing / walking) as the target:
+1. In each of the 15 training folds (5 held-out subjects × 3 training
+   environments), the feature with the largest |Spearman ρ| with activity is
+   selected (`feature_selection_per_fold.csv`). When k features tie, each
+   receives 1/k of that fold's vote.
+2. The feature with the most votes across all folds is used as the predictor in
+   every fold (`feature_selection_votes.csv`). This is `var_roc_mean_mag`.
+
+Four classifiers are evaluated, each using the min–max scaled
+`var_roc_mean_mag` as the sole predictor and `activity` (standing / walking) as
+the target:
 
 | Model | Implementation |
 | --- | --- |
@@ -107,42 +124,59 @@ predictor and `activity` (standing / walking) as the target:
 | Random Forest | `randomForest(..., ntree = 100)` |
 | SVM | `e1071::svm(..., kernel = "radial", probability = TRUE)` |
 
-Two evaluation protocols are run:
+A single loop covers every ordered pair of training and testing environments,
+**including the matched pairs where the two are the same**. In each fold the
+model is trained on four subjects' sessions from the training environment and
+tested on the held-out subject's sessions from the testing environment. No
+test information leaks into training:
 
-1. **Within-environment LOSO** (lines 690–897) — for each environment, train on
-   four subjects and test on the held-out subject; metrics are averaged over the
-   five folds and plotted as grouped bar charts of mean accuracy, sensitivity and
-   specificity.
-2. **Cross-environment LOSO** (lines 899–1030) — for every ordered pair of
-   training and testing environments, **including the matched pairs where the
-   two are the same**, train on four subjects' sessions from the training
-   environment and test on the held-out subject's sessions from the testing
-   environment. Min–max scaling is fitted on the training fold only and applied
-   to the test fold with the training fold's min/max, so no test information
-   leaks into the scaling step. Folds are skipped when a fold would contain only
-   one class. This loop alone produces all 36 rows of `loso_results.csv`.
+- The outlier lower fence for each environment is computed from the training
+  subjects' packets only and then applied to all subjects in that environment.
+  The fence and the percentage of packets removed per subject in every fold are
+  saved to `removal_table.csv`.
+- Min–max scaling is fitted on the training fold and applied to the test fold
+  with the training fold's min/max.
+
+### 3.8 Ablation study (`Modelling_v1.0.0.R`)
+
+Every non-empty subset of the four candidate features (4 single features,
+6 pairs, 4 triples and all four together = 15 feature sets) is evaluated with
+the same LOSO folds, outlier fences, scaling and models as in 3.7. No feature
+selection is done; each subset is used as given. The ablation results are
+provided in this repository only and are not reported in the paper.
 
 ---
 
-## 4. Results file — `loso_results.csv`
+## 4. Results files
 
-One row per (model, train environment, test environment) combination, 36 rows in
-total: 4 models × 3 training environments × 3 testing environments.
+`loso_fold_results.csv` has one row per (model, train environment, test
+environment, held-out subject): 4 models × 3 training environments × 3 testing
+environments × 5 subjects = 180 rows. `loso_summary.csv` averages these over the
+five folds, giving 36 rows.
 
 | Column | Meaning |
 | --- | --- |
 | `model` | Logistic Regression, Decision Tree, Random Forest, or SVM |
 | `train_environment` | Environment supplying the training sessions (`Open`, `Foil`, `No Foil`) |
 | `test_environment` | Environment supplying the held-out subject's test sessions |
-| `accuracy` | Mean accuracy across the LOSO folds |
-| `sensitivity` | Mean sensitivity (walking correctly identified) |
-| `specificity` | Mean specificity (standing correctly identified) |
-| `n_folds` | Number of folds contributing to the averages (5 = all subjects used) |
+| `test_subject` | Held-out subject (`loso_fold_results.csv` only) |
+| `selected_feature` | Predictor used in the fold (`loso_fold_results.csv` only) |
+| `accuracy` | Accuracy |
+| `sensitivity` | Sensitivity (walking correctly identified) |
+| `specificity` | Specificity (standing correctly identified) |
+| `f1_score` | F1 score for the walking class (`NA` when no session is predicted as walking) |
+| `balanced_accuracy` | Mean of sensitivity and specificity |
 
 Rows where `train_environment == test_environment` are the within-environment
 LOSO results; the remaining rows are the cross-environment transfer results.
-Both are produced by the same loop, so every row in the file —
-diagonal included — uses the leakage-free protocol in which min–max scaling is
-fitted on the training fold alone and the held-out subject never appears in
-training. The file is the contents of `cross_env_loso_results` at the end of the
-script.
+
+Other files written by `Modelling_v1.0.0.R`:
+
+| File | Contents |
+| --- | --- |
+| `removal_table.csv` | Lower fence and percentage of packets removed per subject, for every held-out subject and environment |
+| `feature_selection_per_fold.csv` | Spearman ρ of each feature and the selected (or tied) feature(s) in each training fold |
+| `feature_selection_votes.csv` | Split votes per feature across the 15 training folds |
+| `ablation_fold_results.csv` | Same as `loso_fold_results.csv` for every feature set, with `n_features` and `feature_set` columns |
+| `ablation_summary.csv` | Same as `loso_summary.csv` for every feature set |
+| `ablation_overview.csv` | Mean accuracy within the training environment (`accuracy_within_env`) and across environments (`accuracy_cross_env`) per feature set and model |

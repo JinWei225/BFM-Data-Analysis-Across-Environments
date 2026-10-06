@@ -1,16 +1,15 @@
+# ANALYSIS: data preparation, outlier removal, descriptive statistics,
+# hypothesis testing and feature engineering.
+# Run this file first. It saves the packet-level features to
+# data/bfm_packet_features.rds, which Modelling_v1.0.0.R reads.
+
 library(lubridate)
 library(ggplot2)
 library(moments)
-library(boot)
 library(dunn.test)
 library(car)
 library(dplyr)
-library(nlme)
-library(caret)
-library(rpart)
-library(randomForest)
-library(e1071)
-library(InformationValue)
+
 # Load the dataset
 df <- read.csv("bfm_data.csv")
 
@@ -57,6 +56,10 @@ df$timestamp <- ymd_hms(df$timestamp, tz = "Asia/Kuala_Lumpur")
 
 cols_to_drop <- c(scidx_cols, address_cols)
 df <- df[, !colnames(df) %in% cols_to_drop]
+
+# Save packet-level features (before outlier removal) for Modelling_v1.0.0.R
+dir.create("data", showWarnings = FALSE)
+saveRDS(df, "data/bfm_packet_features.rds")
 
 df_foil <- df[df$environment == "foil", ]
 df_nofoil <- df[df$environment == "nofoil", ]
@@ -280,7 +283,7 @@ df_clean <- rbind(df_open_clean, df_foil_clean, df_nofoil_clean)
 environments <- c("open", "foil", "nofoil")
 
 session_level <- df_clean %>%
-  group_by(session_id, environment) %>%
+  group_by(session_id, environment, subject) %>%
   summarise(
     mean_mag = mean(Mean_Magnitude, na.rm = TRUE),
     mean_pha = mean(Mean_Phase, na.rm = TRUE),
@@ -340,26 +343,80 @@ for (fidx in seq_along(session_features)) {
 }
 
 
-# HYPOTHESIS TESTING (session-level)
+# HYPOTHESIS TESTING (session-level, per subject)
 # Kruskal-Wallis is used since not all features are normally distributed
 # and they do not have equal variances
-# Post-hoc pairwise comparisons are run for all features
+# Sessions from the same subject are not independent, so the environments
+# are compared within each subject separately (10 sessions per environment
+# per subject) instead of pooling all subjects into one test.
+# H0: feature distribution is the same across environments for this subject.
+# H1: at least one environment differs for this subject.
+# Holm correction is applied across the subjects of each feature.
+# Post-hoc pairwise comparisons (Dunn's, Bonferroni) are run per subject.
 
-cat("\n=== Kruskal-Wallis Hypothesis Tests (session-level) ===\n")
+session_subjects <- sort(unique(session_level$subject))
+kw_subject_results <- data.frame()
+dunn_subject_results <- data.frame()
+
 for (fidx in seq_along(session_features)) {
   feat <- session_features[fidx]
-  cat("\n---------- Feature:", feature_labels[fidx], "----------\n")
-  
-  # Kruskal-Wallis
-  cat("[Kruskal-Wallis]\n")
-  print(kruskal.test(as.formula(paste(feat, "~ environment")),
-                     data = session_level))
-  
-  # Dunn's post-hoc pairwise comparisons (Bonferroni)
-  cat("[Dunn's post-hoc pairwise (Bonferroni)]\n")
-  dunn.test(session_level[[feat]], session_level$environment,
-            method = "bonferroni")
+  for (subj in session_subjects) {
+    sub <- session_level[session_level$subject == subj, ]
+
+    # Kruskal-Wallis
+    kw <- kruskal.test(sub[[feat]], factor(sub$environment, levels = environments))
+    n <- nrow(sub)
+    kw_subject_results <- rbind(kw_subject_results, data.frame(
+      feature = feature_labels[fidx],
+      subject = subj,
+      n_sessions = n,
+      chi_squared = round(unname(kw$statistic), 3),
+      df = unname(kw$parameter),
+      p_value = kw$p.value,
+      # Epsilon-squared effect size: H / (n - 1)
+      epsilon_sq = round(unname(kw$statistic) / (n - 1), 3)
+    ))
+
+    # Dunn's post-hoc pairwise comparisons (Bonferroni, two-sided p-values)
+    invisible(capture.output(
+      dn <- dunn.test(sub[[feat]], sub$environment, method = "bonferroni",
+                      kw = FALSE, table = FALSE, altp = TRUE)
+    ))
+    dunn_subject_results <- rbind(dunn_subject_results, data.frame(
+      feature = feature_labels[fidx],
+      subject = subj,
+      comparison = dn$comparisons,
+      z = round(dn$Z, 3),
+      p_adj_bonferroni = round(dn$altP.adjusted, 4)
+    ))
+  }
 }
+
+kw_subject_results <- kw_subject_results %>%
+  group_by(feature) %>%
+  mutate(p_adj_holm = p.adjust(p_value, method = "holm")) %>%
+  ungroup() %>%
+  mutate(significant = ifelse(p_adj_holm < 0.05, "Yes", "No"),
+         p_value = round(p_value, 4),
+         p_adj_holm = round(p_adj_holm, 4))
+
+# Number of subjects in which each feature differs across environments
+kw_subject_summary <- kw_subject_results %>%
+  group_by(feature) %>%
+  summarise(n_subjects_significant = sum(significant == "Yes"),
+            n_subjects = n(),
+            median_epsilon_sq = median(epsilon_sq),
+            .groups = "drop")
+
+cat("\n=== Kruskal-Wallis Hypothesis Tests (session-level, per subject) ===\n")
+print(as.data.frame(kw_subject_results), row.names = FALSE)
+cat("\n=== Dunn's Post-hoc Pairwise Tests (per subject, Bonferroni) ===\n")
+print(as.data.frame(dunn_subject_results), row.names = FALSE)
+cat("\n=== Subjects with significant environment effect (Holm-adjusted p < 0.05) ===\n")
+print(as.data.frame(kw_subject_summary), row.names = FALSE)
+
+write.csv(kw_subject_results, "results/kruskal_wallis_per_subject.csv", row.names = FALSE)
+write.csv(dunn_subject_results, "results/dunn_per_subject.csv", row.names = FALSE)
 
 # STANDING vs WALKING COMPARISON (per environment, session-level)
 session_activity <- df_clean %>%
@@ -647,220 +704,3 @@ for (env in environments) {
   ggsave(file.path(fig_dir, paste0("spearman_heatmap_", env, ".png")),
          plot = p, width = 11, height = 8, dpi = 300)
 }
-
-# Changes based on reviewer comment starts here
-
-# Set random seed so that the results are reproducible
-set.seed(42)
-
-subjects <- sort(unique(df$subject))
-envs <- c("open", "foil", "nofoil")
-env_labels <- c(open = "Open", foil = "Foil", nofoil = "No Foil")
-potential_features <- c("var_roc_mean_mag", "var_roc_mean_pha", 
-                        "var_roc_std_mag", "var_roc_pha_coh")
-model_types <- c("Logistic Regression" = "lr", "Decision Tree" = "tree",
-                 "Random Forest" = "rf", "SVM" = "svm")
-
-FENCE_MODE    <- "train-only"
-FIXED_FEATURE <- NULL
-
-lower_fence <- function(x) {
-  Q1 <- quantile(x, 0.25, na.rm = TRUE)
-  Q3 <- quantile(x, 0.75, na.rm = TRUE)
-  IQR_val <- Q3 - Q1
-  unname(Q1 - 1.5 * IQR_val)
-}
-
-build_session_features <- function(packets) {
-  packets %>%
-    group_by(session_id, environment, activity, subject) %>%
-    arrange(timestamp, .by_group = TRUE) %>%
-    summarise(
-      var_roc_mean_mag = var_roc(Mean_Magnitude, timestamp),
-      var_roc_mean_pha = var_roc(Mean_Phase, timestamp),
-      var_roc_std_mag  = var_roc(Std_Magnitude, timestamp),
-      var_roc_pha_coh  = var_roc(Phase_Coherence, timestamp),
-      .groups = "drop"
-    ) %>%
-    mutate(
-      activity_num    = ifelse(activity == "walking", 1, 0),
-      activity_factor = factor(activity, levels = c("standing", "walking"))
-    )
-}
-
-
-prepare_env_fold <- function(env, test_subject) {
-  env_packets <- df[df$environment == env, ]
-  if (FENCE_MODE == "all") {
-    fence <- lower_fence(env_packets$Mean_Magnitude)
-  } else {
-    train_packets <- env_packets[env_packets$subject != test_subject, ]
-    fence <- lower_fence(train_packets$Mean_Magnitude)
-  }
-  keep <- env_packets$Mean_Magnitude >= fence
-  removed <- env_packets$Mean_Magnitude < fence
-  pct_removed <- tapply(removed, env_packets$subject, mean) * 100
-  cat("Fence:", round(fence, 2), "| % of packets removed per subject:\n")
-  print(round(pct_removed, 2))
-  sessions <- build_session_features(env_packets[keep, ])
-  return(list(sessions = sessions, fence = fence, removed = pct_removed))
-}
-
-select_feature <- function(train_sessions) {
-  rho <- sapply(potential_features, function(f)
-    cor(train_sessions[[f]], train_sessions$activity_num, method = "spearman"))
-  if (!is.null(FIXED_FEATURE)) 
-    chosen <- FIXED_FEATURE 
-  else 
-    chosen <- names(which.max(abs(rho)))
-  list(feature = chosen, rho = rho)
-}
-
-# Fit a classifier of the given type on a (already scaled) training fold
-fit_model <- function(model_type, train_data) {
-  switch(model_type,
-    "lr"   = glm(activity_num ~ x_scaled, data = train_data, family = "binomial"),
-    "tree" = rpart(activity_factor ~ x_scaled, data = train_data, method = "class"),
-    "rf"   = randomForest(activity_factor ~ x_scaled, data = train_data, ntree = 100),
-    "svm"  = svm(activity_factor ~ x_scaled, data = train_data, kernel = "radial", probability = TRUE)
-  )
-}
-
-# Get predicted probability of the "walking" class for a fitted classifier
-predict_walking_prob <- function(model, model_type, newdata) {
-  switch(model_type,
-    "lr"   = predict(model, newdata = newdata, type = "response"),
-    "tree" = predict(model, newdata = newdata, type = "prob")[, "walking"],
-    "rf"   = predict(model, newdata = newdata, type = "prob")[, "walking"],
-    "svm"  = attr(predict(model, newdata = newdata, probability = TRUE), "probabilities")[, "walking"]
-  )
-}
-
-pred_log <- list()
-fold_info <- list()
-
-for (test_subject in subjects) {
-  env_tab <- lapply(setNames(envs, envs), prepare_env_fold, test_subject = test_subject)
-  fold_info[[test_subject]] <- list(
-    fence = sapply(env_tab, function(e) e$fence),
-    removed = lapply(env_tab, function(e) e$removed),
-    chosen = list(), rho = list()
-  )
-  
-  for (train_env in envs) {
-    train <- env_tab[[train_env]]$sessions
-    train <- train[train$subject != test_subject, ]
-    
-    selection <- select_feature(train)
-    fold_info[[test_subject]]$chosen[[train_env]] <- selection$feature
-    fold_info[[test_subject]]$rho[[train_env]] <- selection$rho
-    
-    low <- min(train[[selection$feature]])
-    high <- max(train[[selection$feature]])
-    train$x_scaled <- (train[[selection$feature]] - low) / (high - low)
-    train$activity_factor <- factor(train$activity, levels = c("standing", "walking"))
-    
-    for (model_name in names(model_types)) {
-      model_type <- model_types[[model_name]]
-      model <- fit_model(model_type, train)
-      
-      for (test_env in envs) {
-        test <- env_tab[[test_env]]$sessions
-        test <- test[test$subject == test_subject, ]
-        test$x_scaled <- (test[[selection$feature]] - low) / (high - low)
-        test$activity_factor <- factor(test$activity, levels = c("standing", "walking"))
-        
-        probs <- predict_walking_prob(model, model_type, test)
-        
-        pred_log[[length(pred_log) + 1]] <- data.frame(
-          test_subject = test_subject,
-          model = model_name, 
-          train_env = train_env,
-          test_env = test_env, 
-          selected_feature = selection$feature,
-          session_id = test$session_id,
-          actual = test$activity_factor,
-          prob = unname(probs),
-          pred = factor(ifelse(probs > 0.5, "walking", "standing"),
-                        levels = c("standing", "walking"))
-        )
-      }
-    }
-  }
-}
-
-pred_log <- do.call(rbind, pred_log)
-
-removal_table <- do.call(rbind, lapply(subjects, function(s) {
-  do.call(rbind, lapply(envs, function(e) {
-    p <- fold_info[[s]]$removed[[e]]
-    data.frame(held_out = s,
-               environment = e,
-               fence = round(unname(fold_info[[s]]$fence[e]), 2),
-               subject = names(p),
-               pct_removed = as.numeric(p))
-  }))
-}))
-
-removal_table
-
-feature_selection_table <- do.call(rbind, lapply(subjects, function(s) {
-  chosen <- fold_info[[s]]$chosen          # named list: one entry per training environment
-  rho    <- fold_info[[s]]$rho
-  rho_mat <- t(sapply(names(chosen), function(e) round(rho[[e]], 2)))
-  
-  data.frame(test_subject     = s,
-             train_env        = names(chosen),
-             selected_feature = unlist(chosen, use.names = FALSE),
-             rho_mat,
-             row.names = NULL)
-}))
-
-feature_selection_table
-
-fold_metrics_all <- data.frame()
-
-for (model_name in names(model_types)) {
-  for (train_env in envs) {
-    for (test_env in envs) {
-      fold_metrics <- data.frame()
-
-      for (test_subject in subjects) {
-        d <- pred_log[pred_log$model == model_name &
-                      pred_log$train_env == train_env &
-                      pred_log$test_env == test_env &
-                      pred_log$test_subject == test_subject, ]
-        cm    <- caret::confusionMatrix(d$pred, d$actual, positive = "walking")
-
-        fold_metrics <- rbind(fold_metrics, data.frame(
-          test_subject = test_subject,
-          selected_feature = unique(d$selected_feature),
-          accuracy    = as.numeric(cm$overall["Accuracy"]),
-          sensitivity = as.numeric(cm$byClass["Sensitivity"]),
-          specificity = as.numeric(cm$byClass["Specificity"]),
-          f1_score = as.numeric(cm$byClass["F1"]),
-          balanced_accuracy = as.numeric(cm$byClass["Balanced Accuracy"])
-        ))
-      }
-
-      mean_accuracy    <- round(mean(fold_metrics$accuracy, na.rm = TRUE), 4)
-      mean_sensitivity <- round(mean(fold_metrics$sensitivity, na.rm = TRUE), 4)
-      mean_specificity <- round(mean(fold_metrics$specificity, na.rm = TRUE), 4)
-
-      cat(sprintf("\n%s trained in %s Environment (LOSO), tested with %s environment data (%d/%d folds):\n",
-                  model_name, env_labels[[train_env]], env_labels[[test_env]], nrow(fold_metrics), length(subjects)))
-      cat("Mean Accuracy: ", mean_accuracy,
-          " Mean Sensitivity: ", mean_sensitivity,
-          " Mean Specificity: ", mean_specificity, "\n")
-
-      fold_metrics_all <- rbind(fold_metrics_all, data.frame(
-        model = model_name,
-        train_environment = env_labels[[train_env]],
-        test_environment = env_labels[[test_env]],
-        fold_metrics
-      ))
-    }
-  }
-}
-
-write.csv(fold_metrics_all, "results/loso_fold_results.csv", row.names = FALSE)

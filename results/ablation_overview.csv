@@ -1,0 +1,61 @@
+"n_features","feature_set","model","accuracy_within_env","accuracy_cross_env"
+1,"var_roc_mean_mag","Decision Tree",0.78,0.6233
+1,"var_roc_mean_mag","Logistic Regression",0.84,0.5833
+1,"var_roc_mean_mag","Random Forest",0.82,0.62
+1,"var_roc_mean_mag","SVM",0.8333,0.5833
+1,"var_roc_mean_pha","Decision Tree",0.74,0.6267
+1,"var_roc_mean_pha","Logistic Regression",0.7733,0.5967
+1,"var_roc_mean_pha","Random Forest",0.7533,0.6467
+1,"var_roc_mean_pha","SVM",0.76,0.5967
+1,"var_roc_std_mag","Decision Tree",0.8667,0.6433
+1,"var_roc_std_mag","Logistic Regression",0.8467,0.5733
+1,"var_roc_std_mag","Random Forest",0.8467,0.66
+1,"var_roc_std_mag","SVM",0.8667,0.5633
+1,"var_roc_pha_coh","Decision Tree",0.7867,0.65
+1,"var_roc_pha_coh","Logistic Regression",0.7933,0.64
+1,"var_roc_pha_coh","Random Forest",0.8333,0.6767
+1,"var_roc_pha_coh","SVM",0.7933,0.6367
+2,"var_roc_mean_mag + var_roc_mean_pha","Decision Tree",0.7533,0.62
+2,"var_roc_mean_mag + var_roc_mean_pha","Logistic Regression",0.7933,0.5933
+2,"var_roc_mean_mag + var_roc_mean_pha","Random Forest",0.7933,0.64
+2,"var_roc_mean_mag + var_roc_mean_pha","SVM",0.84,0.5833
+2,"var_roc_mean_mag + var_roc_std_mag","Decision Tree",0.8533,0.6267
+2,"var_roc_mean_mag + var_roc_std_mag","Logistic Regression",0.8933,0.6267
+2,"var_roc_mean_mag + var_roc_std_mag","Random Forest",0.9,0.6333
+2,"var_roc_mean_mag + var_roc_std_mag","SVM",0.86,0.59
+2,"var_roc_mean_mag + var_roc_pha_coh","Decision Tree",0.72,0.6233
+2,"var_roc_mean_mag + var_roc_pha_coh","Logistic Regression",0.7933,0.59
+2,"var_roc_mean_mag + var_roc_pha_coh","Random Forest",0.78,0.64
+2,"var_roc_mean_mag + var_roc_pha_coh","SVM",0.84,0.58
+2,"var_roc_mean_pha + var_roc_std_mag","Decision Tree",0.84,0.6433
+2,"var_roc_mean_pha + var_roc_std_mag","Logistic Regression",0.86,0.5767
+2,"var_roc_mean_pha + var_roc_std_mag","Random Forest",0.8067,0.6633
+2,"var_roc_mean_pha + var_roc_std_mag","SVM",0.8667,0.57
+2,"var_roc_mean_pha + var_roc_pha_coh","Decision Tree",0.76,0.6567
+2,"var_roc_mean_pha + var_roc_pha_coh","Logistic Regression",0.7533,0.6333
+2,"var_roc_mean_pha + var_roc_pha_coh","Random Forest",0.7467,0.65
+2,"var_roc_mean_pha + var_roc_pha_coh","SVM",0.78,0.62
+2,"var_roc_std_mag + var_roc_pha_coh","Decision Tree",0.82,0.6
+2,"var_roc_std_mag + var_roc_pha_coh","Logistic Regression",0.8267,0.64
+2,"var_roc_std_mag + var_roc_pha_coh","Random Forest",0.8,0.6733
+2,"var_roc_std_mag + var_roc_pha_coh","SVM",0.88,0.5833
+3,"var_roc_mean_mag + var_roc_mean_pha + var_roc_std_mag","Decision Tree",0.8467,0.63
+3,"var_roc_mean_mag + var_roc_mean_pha + var_roc_std_mag","Logistic Regression",0.84,0.6067
+3,"var_roc_mean_mag + var_roc_mean_pha + var_roc_std_mag","Random Forest",0.86,0.62
+3,"var_roc_mean_mag + var_roc_mean_pha + var_roc_std_mag","SVM",0.8867,0.5767
+3,"var_roc_mean_mag + var_roc_mean_pha + var_roc_pha_coh","Decision Tree",0.72,0.6267
+3,"var_roc_mean_mag + var_roc_mean_pha + var_roc_pha_coh","Logistic Regression",0.7867,0.6
+3,"var_roc_mean_mag + var_roc_mean_pha + var_roc_pha_coh","Random Forest",0.7933,0.6333
+3,"var_roc_mean_mag + var_roc_mean_pha + var_roc_pha_coh","SVM",0.86,0.58
+3,"var_roc_mean_mag + var_roc_std_mag + var_roc_pha_coh","Decision Tree",0.8333,0.61
+3,"var_roc_mean_mag + var_roc_std_mag + var_roc_pha_coh","Logistic Regression",0.82,0.6333
+3,"var_roc_mean_mag + var_roc_std_mag + var_roc_pha_coh","Random Forest",0.8467,0.6367
+3,"var_roc_mean_mag + var_roc_std_mag + var_roc_pha_coh","SVM",0.8867,0.5867
+3,"var_roc_mean_pha + var_roc_std_mag + var_roc_pha_coh","Decision Tree",0.8267,0.6367
+3,"var_roc_mean_pha + var_roc_std_mag + var_roc_pha_coh","Logistic Regression",0.8067,0.5967
+3,"var_roc_mean_pha + var_roc_std_mag + var_roc_pha_coh","Random Forest",0.8,0.6533
+3,"var_roc_mean_pha + var_roc_std_mag + var_roc_pha_coh","SVM",0.8733,0.5867
+4,"var_roc_mean_mag + var_roc_mean_pha + var_roc_std_mag + var_roc_pha_coh","Decision Tree",0.8333,0.6133
+4,"var_roc_mean_mag + var_roc_mean_pha + var_roc_std_mag + var_roc_pha_coh","Logistic Regression",0.8133,0.6067
+4,"var_roc_mean_mag + var_roc_mean_pha + var_roc_std_mag + var_roc_pha_coh","Random Forest",0.84,0.64
+4,"var_roc_mean_mag + var_roc_mean_pha + var_roc_std_mag + var_roc_pha_coh","SVM",0.8867,0.58

@@ -1,0 +1,19 @@
+% Requires \usepackage{booktabs}
+\begin{table}[htbp]
+  \centering
+  \caption{Spearman-based feature selection across the 15 LOSO training folds
+  (5 held-out subjects $\times$ 3 training environments). Each fold casts one
+  vote for the feature with the largest $|\rho|$ with activity; when $k$
+  features tie, each receives $1/k$ of the vote.}
+  \label{tab:feature_selection_votes}
+  \begin{tabular}{lccc}
+    \toprule
+    Feature & Votes & Folds ranked top (incl.\ ties) & Mean $|\rho|$ \\
+    \midrule
+    \texttt{var\_roc\_mean\_mag} & \textbf{5.75} & 10 & 0.760 \\
+    \texttt{var\_roc\_pha\_coh}  & 4.58 & 10 & 0.755 \\
+    \texttt{var\_roc\_std\_mag}  & 3.08 & 8  & 0.732 \\
+    \texttt{var\_roc\_mean\_pha} & 1.58 & 6  & 0.712 \\
+    \bottomrule
+  \end{tabular}
+\end{table}
