@@ -1,0 +1,52 @@
+% Requires \usepackage{booktabs} and \usepackage{multirow}
+\begin{table}[htbp]
+  \centering
+  \small
+  \caption{Hyperparameters of the four classifiers. No hyperparameter tuning
+  was performed; all settings are the package defaults except those marked
+  with $^\dagger$. $p$ is the number of predictors ($p = 1$ in the main
+  evaluation). For every model, a session is classified as walking when the
+  predicted probability of walking exceeds 0.5. Random seed: 42.}
+  \label{tab:model_hyperparameters}
+  \begin{tabular}{llll}
+    \toprule
+    Model & Hyperparameter (R argument) & Value used & Default \\
+    \midrule
+    \multirow{4}{*}{\shortstack[l]{Logistic Regression\\(\texttt{stats::glm})}}
+      & Family / link (\texttt{family})        & binomial / logit & -- \\
+      & Regularisation                         & none             & none \\
+      & Convergence tolerance (\texttt{epsilon}) & $10^{-8}$      & $10^{-8}$ \\
+      & Maximum iterations (\texttt{maxit})    & 25               & 25 \\
+    \midrule
+    \multirow{9}{*}{\shortstack[l]{Decision Tree\\(\texttt{rpart})}}
+      & Split criterion (\texttt{parms\$split}) & Gini            & Gini \\
+      & Min.\ samples to split (\texttt{minsplit}) & 20           & 20 \\
+      & Min.\ samples per leaf (\texttt{minbucket}) & 7           & \texttt{round(minsplit/3)} \\
+      & Complexity parameter (\texttt{cp})     & 0.01             & 0.01 \\
+      & Maximum depth (\texttt{maxdepth})      & 30               & 30 \\
+      & Class priors (\texttt{parms\$prior})   & training class proportions & training class proportions \\
+      & Misclassification loss (\texttt{parms\$loss}) & equal costs & equal costs \\
+      & Surrogate splits (\texttt{maxsurrogate}, \texttt{usesurrogate}) & 5, 2 & 5, 2 \\
+      & Post-pruning                           & none             & none \\
+    \midrule
+    \multirow{7}{*}{\shortstack[l]{Random Forest\\(\texttt{randomForest})}}
+      & Number of trees (\texttt{ntree})       & \textbf{100}$^\dagger$ & 500 \\
+      & Predictors per split (\texttt{mtry})   & $\lfloor\sqrt{p}\rfloor$ & $\lfloor\sqrt{p}\rfloor$ \\
+      & Min.\ terminal node size (\texttt{nodesize}) & 1          & 1 \\
+      & Max.\ terminal nodes (\texttt{maxnodes}) & unlimited      & unlimited \\
+      & Bootstrap sampling (\texttt{replace})  & with replacement & with replacement \\
+      & Sample size per tree (\texttt{sampsize}) & $n$ (training sessions) & $n$ \\
+      & Class weights (\texttt{classwt})       & none             & none \\
+    \midrule
+    \multirow{8}{*}{\shortstack[l]{SVM\\(\texttt{e1071::svm})}}
+      & Formulation (\texttt{type})            & C-classification & C-classification \\
+      & Kernel (\texttt{kernel})               & radial basis function & radial basis function \\
+      & Cost (\texttt{cost})                   & 1                & 1 \\
+      & Kernel width (\texttt{gamma})          & $1/p$            & $1/p$ \\
+      & Feature standardisation (\texttt{scale}) & yes            & yes \\
+      & Class weights (\texttt{class.weights}) & none             & none \\
+      & Stopping tolerance (\texttt{tolerance}) & 0.001           & 0.001 \\
+      & Probability estimates (\texttt{probability}) & \textbf{yes}$^\dagger$ & no \\
+    \bottomrule
+  \end{tabular}
+\end{table}

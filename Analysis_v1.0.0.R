@@ -1,6 +1,6 @@
 # ANALYSIS: data preparation, outlier removal, descriptive statistics,
 # hypothesis testing and feature engineering.
-# Run this file first. It saves the packet-level features to
+# Please run this file first as it saves the packet-level features to
 # data/bfm_packet_features.rds, which Modelling_v1.0.0.R reads.
 
 library(lubridate)
