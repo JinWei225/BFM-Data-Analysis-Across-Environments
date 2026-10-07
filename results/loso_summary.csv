@@ -1,37 +1,37 @@
-"model","train_environment","test_environment","accuracy","sensitivity","specificity","f1_score","balanced_accuracy"
-"Decision Tree","Foil","Foil",0.76,0.76,0.76,0.7374,0.76
-"Decision Tree","Foil","No Foil",0.54,0.08,1,0.5714,0.54
-"Decision Tree","Foil","Open",0.5,0,1,NA,0.5
-"Decision Tree","No Foil","Foil",0.6,0.96,0.24,0.7206,0.6
-"Decision Tree","No Foil","No Foil",0.6,0.68,0.52,0.6804,0.6
-"Decision Tree","No Foil","Open",0.8,0.6,1,1,0.8
-"Decision Tree","Open","Foil",0.52,1,0.04,0.6762,0.52
-"Decision Tree","Open","No Foil",0.78,1,0.56,0.8429,0.78
-"Decision Tree","Open","Open",0.98,0.96,1,0.9778,0.98
-"Logistic Regression","Foil","Foil",0.8,0.76,0.84,0.7651,0.8
-"Logistic Regression","Foil","No Foil",0.5,0,1,NA,0.5
-"Logistic Regression","Foil","Open",0.5,0,1,NA,0.5
-"Logistic Regression","No Foil","Foil",0.6,0.96,0.24,0.7138,0.6
-"Logistic Regression","No Foil","No Foil",0.74,0.68,0.8,0.8264,0.74
-"Logistic Regression","No Foil","Open",0.6,0.2,1,0.6607,0.6
-"Logistic Regression","Open","Foil",0.52,1,0.04,0.6762,0.52
-"Logistic Regression","Open","No Foil",0.78,1,0.56,0.8429,0.78
-"Logistic Regression","Open","Open",0.98,0.96,1,0.9778,0.98
-"Random Forest","Foil","Foil",0.78,0.72,0.84,0.7301,0.78
-"Random Forest","Foil","No Foil",0.52,0.12,0.92,0.4524,0.52
-"Random Forest","Foil","Open",0.5,0,1,NA,0.5
-"Random Forest","No Foil","Foil",0.74,1,0.48,0.8152,0.74
-"Random Forest","No Foil","No Foil",0.7,0.64,0.76,0.6719,0.7
-"Random Forest","No Foil","Open",0.66,0.32,1,0.5317,0.66
-"Random Forest","Open","Foil",0.52,1,0.04,0.6762,0.52
-"Random Forest","Open","No Foil",0.78,1,0.56,0.8429,0.78
-"Random Forest","Open","Open",0.98,0.96,1,0.9778,0.98
-"SVM","Foil","Foil",0.8,0.76,0.84,0.7651,0.8
-"SVM","Foil","No Foil",0.5,0,1,NA,0.5
-"SVM","Foil","Open",0.5,0,1,NA,0.5
-"SVM","No Foil","Foil",0.64,0.96,0.32,0.7362,0.64
-"SVM","No Foil","No Foil",0.72,0.64,0.8,0.7917,0.72
-"SVM","No Foil","Open",0.54,0.08,1,0.5714,0.54
-"SVM","Open","Foil",0.54,1,0.08,0.6857,0.54
-"SVM","Open","No Foil",0.78,1,0.56,0.8429,0.78
-"SVM","Open","Open",0.98,0.96,1,0.9778,0.98
+"model","train_environment","test_environment","accuracy","sensitivity","specificity","f1_score","balanced_accuracy","mcc"
+"Decision Tree","Foil","Foil",0.76,0.76,0.76,0.7374,0.76,0.5566
+"Decision Tree","Foil","No Foil",0.54,0.08,1,0.5714,0.54,0.1
+"Decision Tree","Foil","Open",0.5,0,1,NA,0.5,0
+"Decision Tree","No Foil","Foil",0.6,0.96,0.24,0.7206,0.6,0.23
+"Decision Tree","No Foil","No Foil",0.6,0.68,0.52,0.6804,0.6,0.2667
+"Decision Tree","No Foil","Open",0.8,0.6,1,1,0.8,0.6
+"Decision Tree","Open","Foil",0.52,1,0.04,0.6762,0.52,0.0667
+"Decision Tree","Open","No Foil",0.78,1,0.56,0.8429,0.78,0.5976
+"Decision Tree","Open","Open",0.98,0.96,1,0.9778,0.98,0.9633
+"Logistic Regression","Foil","Foil",0.8,0.76,0.84,0.7651,0.8,0.6599
+"Logistic Regression","Foil","No Foil",0.5,0,1,NA,0.5,0
+"Logistic Regression","Foil","Open",0.5,0,1,NA,0.5,0
+"Logistic Regression","No Foil","Foil",0.6,0.96,0.24,0.7138,0.6,0.22
+"Logistic Regression","No Foil","No Foil",0.74,0.68,0.8,0.8264,0.74,0.4942
+"Logistic Regression","No Foil","Open",0.6,0.2,1,0.6607,0.6,0.2309
+"Logistic Regression","Open","Foil",0.52,1,0.04,0.6762,0.52,0.0667
+"Logistic Regression","Open","No Foil",0.78,1,0.56,0.8429,0.78,0.5976
+"Logistic Regression","Open","Open",0.98,0.96,1,0.9778,0.98,0.9633
+"Random Forest","Foil","Foil",0.78,0.72,0.84,0.7301,0.78,0.6242
+"Random Forest","Foil","No Foil",0.52,0.12,0.92,0.4524,0.52,0.0667
+"Random Forest","Foil","Open",0.5,0,1,NA,0.5,0
+"Random Forest","No Foil","Foil",0.74,1,0.48,0.8152,0.74,0.4942
+"Random Forest","No Foil","No Foil",0.7,0.64,0.76,0.6719,0.7,0.4509
+"Random Forest","No Foil","Open",0.66,0.32,1,0.5317,0.66,0.3966
+"Random Forest","Open","Foil",0.52,1,0.04,0.6762,0.52,0.0667
+"Random Forest","Open","No Foil",0.78,1,0.56,0.8429,0.78,0.5976
+"Random Forest","Open","Open",0.98,0.96,1,0.9778,0.98,0.9633
+"SVM","Foil","Foil",0.8,0.76,0.84,0.7651,0.8,0.6599
+"SVM","Foil","No Foil",0.5,0,1,NA,0.5,0
+"SVM","Foil","Open",0.5,0,1,NA,0.5,0
+"SVM","No Foil","Foil",0.64,0.96,0.32,0.7362,0.64,0.3176
+"SVM","No Foil","No Foil",0.72,0.64,0.8,0.7917,0.72,0.4619
+"SVM","No Foil","Open",0.54,0.08,1,0.5714,0.54,0.1
+"SVM","Open","Foil",0.54,1,0.08,0.6857,0.54,0.1333
+"SVM","Open","No Foil",0.78,1,0.56,0.8429,0.78,0.5976
+"SVM","Open","Open",0.98,0.96,1,0.9778,0.98,0.9633

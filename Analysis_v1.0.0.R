@@ -64,9 +64,32 @@ saveRDS(df, "data/bfm_packet_features.rds")
 df_foil <- df[df$environment == "foil", ]
 df_nofoil <- df[df$environment == "nofoil", ]
 df_open <- df[df$environment == "open", ]
-sum(df$environment == "foil") / nrow(df)
-sum(df$environment == "nofoil") / nrow(df)
-sum(df$environment == "open") / nrow(df)
+
+# Number and percentage of data per environment
+sum(df$environment == "foil")
+round(sum(df$environment == "foil") / nrow(df) * 100, 2)
+sum(df$environment == "nofoil")
+round(sum(df$environment == "nofoil") / nrow(df) * 100, 2)
+sum(df$environment == "open")
+round(sum(df$environment == "open") / nrow(df) * 100, 2)
+
+# Number and percentage of data per activity
+sum(df$activity == "standing")
+round(sum(df$activity == "standing") / nrow(df) * 100, 2)
+sum(df$activity == "walking")
+round(sum(df$activity == "walking") / nrow(df) * 100, 2)
+
+# Number and percentage of data per subject
+sum(df$subject == "abel")
+round(sum(df$subject == "abel") / nrow(df) * 100, 2)
+sum(df$subject == "collin")
+round(sum(df$subject == "collin") / nrow(df) * 100, 2)
+sum(df$subject == "ivan")
+round(sum(df$subject == "ivan") / nrow(df) * 100, 2)
+sum(df$subject == "kenny")
+round(sum(df$subject == "kenny") / nrow(df) * 100, 2)
+sum(df$subject == "matthew")
+round(sum(df$subject == "matthew") / nrow(df) * 100, 2)
 
 # Table of number of sessions per environment, subject and activity (raw data, before outlier removal)
 sessions_per_subject <- df %>%

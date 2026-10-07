@@ -1,181 +1,181 @@
-"model","train_environment","test_environment","test_subject","selected_feature","accuracy","sensitivity","specificity","f1_score","balanced_accuracy"
-"Logistic Regression","Open","Open","abel","var_roc_mean_mag",1,1,1,1,1
-"Logistic Regression","Open","Open","collin","var_roc_mean_mag",1,1,1,1,1
-"Logistic Regression","Open","Open","ivan","var_roc_mean_mag",1,1,1,1,1
-"Logistic Regression","Open","Open","kenny","var_roc_mean_mag",1,1,1,1,1
-"Logistic Regression","Open","Open","matthew","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"Logistic Regression","Open","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Logistic Regression","Open","Foil","collin","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"Logistic Regression","Open","Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Logistic Regression","Open","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Logistic Regression","Open","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Logistic Regression","Open","No Foil","abel","var_roc_mean_mag",1,1,1,1,1
-"Logistic Regression","Open","No Foil","collin","var_roc_mean_mag",1,1,1,1,1
-"Logistic Regression","Open","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Logistic Regression","Open","No Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"Logistic Regression","Open","No Foil","matthew","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8
-"Logistic Regression","Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","Foil","Open","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","Foil","Open","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","Foil","Foil","abel","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"Logistic Regression","Foil","Foil","collin","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"Logistic Regression","Foil","Foil","ivan","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6
-"Logistic Regression","Foil","Foil","kenny","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"Logistic Regression","Foil","Foil","matthew","var_roc_mean_mag",1,1,1,1,1
-"Logistic Regression","Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","Foil","No Foil","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","Foil","No Foil","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","Foil","No Foil","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","Foil","No Foil","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","No Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","No Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","No Foil","Open","ivan","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7
-"Logistic Regression","No Foil","Open","kenny","var_roc_mean_mag",0.8,0.6,1,0.75,0.8
-"Logistic Regression","No Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","No Foil","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Logistic Regression","No Foil","Foil","collin","var_roc_mean_mag",0.8,0.8,0.8,0.8,0.8
-"Logistic Regression","No Foil","Foil","ivan","var_roc_mean_mag",0.7,1,0.4,0.769230769230769,0.7
-"Logistic Regression","No Foil","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Logistic Regression","No Foil","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Logistic Regression","No Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Logistic Regression","No Foil","No Foil","collin","var_roc_mean_mag",0.8,0.6,1,0.75,0.8
-"Logistic Regression","No Foil","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Logistic Regression","No Foil","No Foil","kenny","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"Logistic Regression","No Foil","No Foil","matthew","var_roc_mean_mag",1,1,1,1,1
-"Decision Tree","Open","Open","abel","var_roc_mean_mag",1,1,1,1,1
-"Decision Tree","Open","Open","collin","var_roc_mean_mag",1,1,1,1,1
-"Decision Tree","Open","Open","ivan","var_roc_mean_mag",1,1,1,1,1
-"Decision Tree","Open","Open","kenny","var_roc_mean_mag",1,1,1,1,1
-"Decision Tree","Open","Open","matthew","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"Decision Tree","Open","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Decision Tree","Open","Foil","collin","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"Decision Tree","Open","Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Decision Tree","Open","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Decision Tree","Open","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Decision Tree","Open","No Foil","abel","var_roc_mean_mag",1,1,1,1,1
-"Decision Tree","Open","No Foil","collin","var_roc_mean_mag",1,1,1,1,1
-"Decision Tree","Open","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Decision Tree","Open","No Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"Decision Tree","Open","No Foil","matthew","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8
-"Decision Tree","Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","Foil","Open","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","Foil","Open","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","Foil","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Decision Tree","Foil","Foil","collin","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"Decision Tree","Foil","Foil","ivan","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6
-"Decision Tree","Foil","Foil","kenny","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"Decision Tree","Foil","Foil","matthew","var_roc_mean_mag",0.9,1,0.8,0.909090909090909,0.9
-"Decision Tree","Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","Foil","No Foil","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","Foil","No Foil","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","Foil","No Foil","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","Foil","No Foil","matthew","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7
-"Decision Tree","No Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","No Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","No Foil","Open","ivan","var_roc_mean_mag",1,1,1,1,1
-"Decision Tree","No Foil","Open","kenny","var_roc_mean_mag",1,1,1,1,1
-"Decision Tree","No Foil","Open","matthew","var_roc_mean_mag",1,1,1,1,1
-"Decision Tree","No Foil","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Decision Tree","No Foil","Foil","collin","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"Decision Tree","No Foil","Foil","ivan","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"Decision Tree","No Foil","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Decision Tree","No Foil","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Decision Tree","No Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Decision Tree","No Foil","No Foil","collin","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7
-"Decision Tree","No Foil","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Decision Tree","No Foil","No Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"Decision Tree","No Foil","No Foil","matthew","var_roc_mean_mag",0.7,1,0.4,0.769230769230769,0.7
-"Random Forest","Open","Open","abel","var_roc_mean_mag",1,1,1,1,1
-"Random Forest","Open","Open","collin","var_roc_mean_mag",1,1,1,1,1
-"Random Forest","Open","Open","ivan","var_roc_mean_mag",1,1,1,1,1
-"Random Forest","Open","Open","kenny","var_roc_mean_mag",1,1,1,1,1
-"Random Forest","Open","Open","matthew","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"Random Forest","Open","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Random Forest","Open","Foil","collin","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"Random Forest","Open","Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Random Forest","Open","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Random Forest","Open","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Random Forest","Open","No Foil","abel","var_roc_mean_mag",1,1,1,1,1
-"Random Forest","Open","No Foil","collin","var_roc_mean_mag",1,1,1,1,1
-"Random Forest","Open","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Random Forest","Open","No Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"Random Forest","Open","No Foil","matthew","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8
-"Random Forest","Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Random Forest","Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Random Forest","Foil","Open","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Random Forest","Foil","Open","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Random Forest","Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Random Forest","Foil","Foil","abel","var_roc_mean_mag",0.7,1,0.4,0.769230769230769,0.7
-"Random Forest","Foil","Foil","collin","var_roc_mean_mag",0.8,0.6,1,0.75,0.8
-"Random Forest","Foil","Foil","ivan","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6
-"Random Forest","Foil","Foil","kenny","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"Random Forest","Foil","Foil","matthew","var_roc_mean_mag",0.9,1,0.8,0.909090909090909,0.9
-"Random Forest","Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Random Forest","Foil","No Foil","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Random Forest","Foil","No Foil","ivan","var_roc_mean_mag",0.3,0,0.6,NA,0.3
-"Random Forest","Foil","No Foil","kenny","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6
-"Random Forest","Foil","No Foil","matthew","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7
-"Random Forest","No Foil","Open","abel","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7
-"Random Forest","No Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"Random Forest","No Foil","Open","ivan","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6
-"Random Forest","No Foil","Open","kenny","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6
-"Random Forest","No Foil","Open","matthew","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"Random Forest","No Foil","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Random Forest","No Foil","Foil","collin","var_roc_mean_mag",1,1,1,1,1
-"Random Forest","No Foil","Foil","ivan","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8
-"Random Forest","No Foil","Foil","kenny","var_roc_mean_mag",0.9,1,0.8,0.909090909090909,0.9
-"Random Forest","No Foil","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Random Forest","No Foil","No Foil","abel","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7
-"Random Forest","No Foil","No Foil","collin","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7
-"Random Forest","No Foil","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"Random Forest","No Foil","No Foil","kenny","var_roc_mean_mag",0.8,0.6,1,0.75,0.8
-"Random Forest","No Foil","No Foil","matthew","var_roc_mean_mag",0.8,0.8,0.8,0.8,0.8
-"SVM","Open","Open","abel","var_roc_mean_mag",1,1,1,1,1
-"SVM","Open","Open","collin","var_roc_mean_mag",1,1,1,1,1
-"SVM","Open","Open","ivan","var_roc_mean_mag",1,1,1,1,1
-"SVM","Open","Open","kenny","var_roc_mean_mag",1,1,1,1,1
-"SVM","Open","Open","matthew","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"SVM","Open","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"SVM","Open","Foil","collin","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"SVM","Open","Foil","ivan","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"SVM","Open","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"SVM","Open","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"SVM","Open","No Foil","abel","var_roc_mean_mag",1,1,1,1,1
-"SVM","Open","No Foil","collin","var_roc_mean_mag",1,1,1,1,1
-"SVM","Open","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"SVM","Open","No Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"SVM","Open","No Foil","matthew","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8
-"SVM","Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","Foil","Open","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","Foil","Open","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","Foil","Foil","abel","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"SVM","Foil","Foil","collin","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"SVM","Foil","Foil","ivan","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6
-"SVM","Foil","Foil","kenny","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9
-"SVM","Foil","Foil","matthew","var_roc_mean_mag",1,1,1,1,1
-"SVM","Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","Foil","No Foil","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","Foil","No Foil","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","Foil","No Foil","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","Foil","No Foil","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","No Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","No Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","No Foil","Open","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","No Foil","Open","kenny","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7
-"SVM","No Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","No Foil","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"SVM","No Foil","Foil","collin","var_roc_mean_mag",0.8,0.8,0.8,0.8,0.8
-"SVM","No Foil","Foil","ivan","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8
-"SVM","No Foil","Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6
-"SVM","No Foil","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"SVM","No Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5
-"SVM","No Foil","No Foil","collin","var_roc_mean_mag",0.8,0.6,1,0.75,0.8
-"SVM","No Foil","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5
-"SVM","No Foil","No Foil","kenny","var_roc_mean_mag",0.8,0.6,1,0.75,0.8
-"SVM","No Foil","No Foil","matthew","var_roc_mean_mag",1,1,1,1,1
+"model","train_environment","test_environment","test_subject","selected_feature","accuracy","sensitivity","specificity","f1_score","balanced_accuracy","mcc"
+"Logistic Regression","Open","Open","abel","var_roc_mean_mag",1,1,1,1,1,1
+"Logistic Regression","Open","Open","collin","var_roc_mean_mag",1,1,1,1,1,1
+"Logistic Regression","Open","Open","ivan","var_roc_mean_mag",1,1,1,1,1,1
+"Logistic Regression","Open","Open","kenny","var_roc_mean_mag",1,1,1,1,1,1
+"Logistic Regression","Open","Open","matthew","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"Logistic Regression","Open","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Logistic Regression","Open","Foil","collin","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"Logistic Regression","Open","Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Logistic Regression","Open","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Logistic Regression","Open","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Logistic Regression","Open","No Foil","abel","var_roc_mean_mag",1,1,1,1,1,1
+"Logistic Regression","Open","No Foil","collin","var_roc_mean_mag",1,1,1,1,1,1
+"Logistic Regression","Open","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Logistic Regression","Open","No Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"Logistic Regression","Open","No Foil","matthew","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8,0.654653670707977
+"Logistic Regression","Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","Foil","Open","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","Foil","Open","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","Foil","Foil","abel","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"Logistic Regression","Foil","Foil","collin","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"Logistic Regression","Foil","Foil","ivan","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6,0.333333333333333
+"Logistic Regression","Foil","Foil","kenny","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"Logistic Regression","Foil","Foil","matthew","var_roc_mean_mag",1,1,1,1,1,1
+"Logistic Regression","Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","Foil","No Foil","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","Foil","No Foil","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","Foil","No Foil","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","Foil","No Foil","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","No Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","No Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","No Foil","Open","ivan","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7,0.5
+"Logistic Regression","No Foil","Open","kenny","var_roc_mean_mag",0.8,0.6,1,0.75,0.8,0.654653670707977
+"Logistic Regression","No Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","No Foil","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Logistic Regression","No Foil","Foil","collin","var_roc_mean_mag",0.8,0.8,0.8,0.8,0.8,0.6
+"Logistic Regression","No Foil","Foil","ivan","var_roc_mean_mag",0.7,1,0.4,0.769230769230769,0.7,0.5
+"Logistic Regression","No Foil","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Logistic Regression","No Foil","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Logistic Regression","No Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Logistic Regression","No Foil","No Foil","collin","var_roc_mean_mag",0.8,0.6,1,0.75,0.8,0.654653670707977
+"Logistic Regression","No Foil","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Logistic Regression","No Foil","No Foil","kenny","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"Logistic Regression","No Foil","No Foil","matthew","var_roc_mean_mag",1,1,1,1,1,1
+"Decision Tree","Open","Open","abel","var_roc_mean_mag",1,1,1,1,1,1
+"Decision Tree","Open","Open","collin","var_roc_mean_mag",1,1,1,1,1,1
+"Decision Tree","Open","Open","ivan","var_roc_mean_mag",1,1,1,1,1,1
+"Decision Tree","Open","Open","kenny","var_roc_mean_mag",1,1,1,1,1,1
+"Decision Tree","Open","Open","matthew","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"Decision Tree","Open","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Decision Tree","Open","Foil","collin","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"Decision Tree","Open","Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Decision Tree","Open","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Decision Tree","Open","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Decision Tree","Open","No Foil","abel","var_roc_mean_mag",1,1,1,1,1,1
+"Decision Tree","Open","No Foil","collin","var_roc_mean_mag",1,1,1,1,1,1
+"Decision Tree","Open","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Decision Tree","Open","No Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"Decision Tree","Open","No Foil","matthew","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8,0.654653670707977
+"Decision Tree","Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","Foil","Open","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","Foil","Open","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","Foil","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Decision Tree","Foil","Foil","collin","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"Decision Tree","Foil","Foil","ivan","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6,0.333333333333333
+"Decision Tree","Foil","Foil","kenny","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"Decision Tree","Foil","Foil","matthew","var_roc_mean_mag",0.9,1,0.8,0.909090909090909,0.9,0.816496580927726
+"Decision Tree","Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","Foil","No Foil","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","Foil","No Foil","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","Foil","No Foil","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","Foil","No Foil","matthew","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7,0.5
+"Decision Tree","No Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","No Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","No Foil","Open","ivan","var_roc_mean_mag",1,1,1,1,1,1
+"Decision Tree","No Foil","Open","kenny","var_roc_mean_mag",1,1,1,1,1,1
+"Decision Tree","No Foil","Open","matthew","var_roc_mean_mag",1,1,1,1,1,1
+"Decision Tree","No Foil","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Decision Tree","No Foil","Foil","collin","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"Decision Tree","No Foil","Foil","ivan","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"Decision Tree","No Foil","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Decision Tree","No Foil","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Decision Tree","No Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Decision Tree","No Foil","No Foil","collin","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7,0.5
+"Decision Tree","No Foil","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Decision Tree","No Foil","No Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"Decision Tree","No Foil","No Foil","matthew","var_roc_mean_mag",0.7,1,0.4,0.769230769230769,0.7,0.5
+"Random Forest","Open","Open","abel","var_roc_mean_mag",1,1,1,1,1,1
+"Random Forest","Open","Open","collin","var_roc_mean_mag",1,1,1,1,1,1
+"Random Forest","Open","Open","ivan","var_roc_mean_mag",1,1,1,1,1,1
+"Random Forest","Open","Open","kenny","var_roc_mean_mag",1,1,1,1,1,1
+"Random Forest","Open","Open","matthew","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"Random Forest","Open","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Random Forest","Open","Foil","collin","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"Random Forest","Open","Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Random Forest","Open","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Random Forest","Open","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Random Forest","Open","No Foil","abel","var_roc_mean_mag",1,1,1,1,1,1
+"Random Forest","Open","No Foil","collin","var_roc_mean_mag",1,1,1,1,1,1
+"Random Forest","Open","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Random Forest","Open","No Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"Random Forest","Open","No Foil","matthew","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8,0.654653670707977
+"Random Forest","Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Random Forest","Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Random Forest","Foil","Open","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Random Forest","Foil","Open","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Random Forest","Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Random Forest","Foil","Foil","abel","var_roc_mean_mag",0.7,1,0.4,0.769230769230769,0.7,0.5
+"Random Forest","Foil","Foil","collin","var_roc_mean_mag",0.8,0.6,1,0.75,0.8,0.654653670707977
+"Random Forest","Foil","Foil","ivan","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6,0.333333333333333
+"Random Forest","Foil","Foil","kenny","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"Random Forest","Foil","Foil","matthew","var_roc_mean_mag",0.9,1,0.8,0.909090909090909,0.9,0.816496580927726
+"Random Forest","Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Random Forest","Foil","No Foil","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Random Forest","Foil","No Foil","ivan","var_roc_mean_mag",0.3,0,0.6,NA,0.3,-0.5
+"Random Forest","Foil","No Foil","kenny","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6,0.333333333333333
+"Random Forest","Foil","No Foil","matthew","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7,0.5
+"Random Forest","No Foil","Open","abel","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7,0.5
+"Random Forest","No Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"Random Forest","No Foil","Open","ivan","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6,0.333333333333333
+"Random Forest","No Foil","Open","kenny","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6,0.333333333333333
+"Random Forest","No Foil","Open","matthew","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"Random Forest","No Foil","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Random Forest","No Foil","Foil","collin","var_roc_mean_mag",1,1,1,1,1,1
+"Random Forest","No Foil","Foil","ivan","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8,0.654653670707977
+"Random Forest","No Foil","Foil","kenny","var_roc_mean_mag",0.9,1,0.8,0.909090909090909,0.9,0.816496580927726
+"Random Forest","No Foil","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Random Forest","No Foil","No Foil","abel","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7,0.5
+"Random Forest","No Foil","No Foil","collin","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7,0.5
+"Random Forest","No Foil","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"Random Forest","No Foil","No Foil","kenny","var_roc_mean_mag",0.8,0.6,1,0.75,0.8,0.654653670707977
+"Random Forest","No Foil","No Foil","matthew","var_roc_mean_mag",0.8,0.8,0.8,0.8,0.8,0.6
+"SVM","Open","Open","abel","var_roc_mean_mag",1,1,1,1,1,1
+"SVM","Open","Open","collin","var_roc_mean_mag",1,1,1,1,1,1
+"SVM","Open","Open","ivan","var_roc_mean_mag",1,1,1,1,1,1
+"SVM","Open","Open","kenny","var_roc_mean_mag",1,1,1,1,1,1
+"SVM","Open","Open","matthew","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"SVM","Open","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"SVM","Open","Foil","collin","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"SVM","Open","Foil","ivan","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"SVM","Open","Foil","kenny","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"SVM","Open","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"SVM","Open","No Foil","abel","var_roc_mean_mag",1,1,1,1,1,1
+"SVM","Open","No Foil","collin","var_roc_mean_mag",1,1,1,1,1,1
+"SVM","Open","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"SVM","Open","No Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"SVM","Open","No Foil","matthew","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8,0.654653670707977
+"SVM","Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","Foil","Open","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","Foil","Open","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","Foil","Foil","abel","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"SVM","Foil","Foil","collin","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"SVM","Foil","Foil","ivan","var_roc_mean_mag",0.6,0.2,1,0.333333333333333,0.6,0.333333333333333
+"SVM","Foil","Foil","kenny","var_roc_mean_mag",0.9,0.8,1,0.888888888888889,0.9,0.816496580927726
+"SVM","Foil","Foil","matthew","var_roc_mean_mag",1,1,1,1,1,1
+"SVM","Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","Foil","No Foil","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","Foil","No Foil","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","Foil","No Foil","kenny","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","Foil","No Foil","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","No Foil","Open","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","No Foil","Open","collin","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","No Foil","Open","ivan","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","No Foil","Open","kenny","var_roc_mean_mag",0.7,0.4,1,0.571428571428572,0.7,0.5
+"SVM","No Foil","Open","matthew","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","No Foil","Foil","abel","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"SVM","No Foil","Foil","collin","var_roc_mean_mag",0.8,0.8,0.8,0.8,0.8,0.6
+"SVM","No Foil","Foil","ivan","var_roc_mean_mag",0.8,1,0.6,0.833333333333333,0.8,0.654653670707977
+"SVM","No Foil","Foil","kenny","var_roc_mean_mag",0.6,1,0.2,0.714285714285714,0.6,0.333333333333333
+"SVM","No Foil","Foil","matthew","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"SVM","No Foil","No Foil","abel","var_roc_mean_mag",0.5,0,1,NA,0.5,0
+"SVM","No Foil","No Foil","collin","var_roc_mean_mag",0.8,0.6,1,0.75,0.8,0.654653670707977
+"SVM","No Foil","No Foil","ivan","var_roc_mean_mag",0.5,1,0,0.666666666666667,0.5,0
+"SVM","No Foil","No Foil","kenny","var_roc_mean_mag",0.8,0.6,1,0.75,0.8,0.654653670707977
+"SVM","No Foil","No Foil","matthew","var_roc_mean_mag",1,1,1,1,1,1

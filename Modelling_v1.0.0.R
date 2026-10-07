@@ -2,6 +2,7 @@
 # Run Analysis_v1.0.0.R first to create data/bfm_packet_features.rds.
 
 library(dplyr)
+library(ggplot2)
 library(caret)
 library(rpart)
 library(randomForest)
@@ -163,9 +164,11 @@ run_loso <- function(features) {
   do.call(rbind, pred_log)
 }
 
-# Accuracy, sensitivity, specificity, F1 and balanced accuracy for every
+# Accuracy, sensitivity, specificity, F1, balanced accuracy and MCC for every
 # model / training environment / test environment / held-out subject
-compute_fold_metrics <- function(pred_log) {
+# If cm_dir is given, the confusion matrix of every fold is also saved as a PNG
+compute_fold_metrics <- function(pred_log, cm_dir = NULL) {
+  if (!is.null(cm_dir)) dir.create(cm_dir, recursive = TRUE, showWarnings = FALSE)
   fold_metrics_all <- data.frame()
 
   for (model_name in names(model_types)) {
@@ -178,6 +181,36 @@ compute_fold_metrics <- function(pred_log) {
                         pred_log$test_subject == test_subject, ]
           cm <- caret::confusionMatrix(d$pred, d$actual, positive = "walking")
 
+          # Matthews correlation coefficient (rows of cm$table = predicted, columns = actual)
+          TP <- as.numeric(cm$table["walking", "walking"])
+          TN <- as.numeric(cm$table["standing", "standing"])
+          FP <- as.numeric(cm$table["walking", "standing"])
+          FN <- as.numeric(cm$table["standing", "walking"])
+          mcc_denom <- sqrt((TP + FP) * (TP + FN) * (TN + FP) * (TN + FN))
+          mcc <- ifelse(mcc_denom == 0, 0, (TP * TN - FP * FN) / mcc_denom)
+
+          if (!is.null(cm_dir)) {
+            cm_df <- as.data.frame(cm$table)
+            p_cm <- ggplot(cm_df, aes(x = Prediction, y = Reference, fill = Freq)) +
+              geom_tile(color = "white") +
+              geom_text(aes(label = Freq), size = 8, fontface = "bold") +
+              scale_fill_gradient(low = "white", high = "steelblue", limits = c(0, 10)) +
+              scale_y_discrete(limits = rev(levels(cm_df$Reference))) +
+              labs(
+                title = paste0(model_name, ": ", env_labels[[train_env]], " -> ",
+                               env_labels[[test_env]]),
+                subtitle = paste("Held-out subject:", test_subject),
+                x = "Predicted", y = "Actual"
+              ) +
+              theme_minimal(base_size = 16) +
+              theme(legend.position = "none", panel.grid = element_blank())
+            ggsave(
+              file.path(cm_dir, paste0("cm_", gsub("[^A-Za-z0-9]+", "", model_name), "_",
+                                       train_env, "_", test_env, "_", test_subject, ".png")),
+              plot = p_cm, width = 5, height = 4.5, dpi = 300
+            )
+          }
+
           fold_metrics_all <- rbind(fold_metrics_all, data.frame(
             model = model_name,
             train_environment = env_labels[[train_env]],
@@ -188,7 +221,8 @@ compute_fold_metrics <- function(pred_log) {
             sensitivity = as.numeric(cm$byClass["Sensitivity"]),
             specificity = as.numeric(cm$byClass["Specificity"]),
             f1_score = as.numeric(cm$byClass["F1"]),
-            balanced_accuracy = as.numeric(cm$byClass["Balanced Accuracy"])
+            balanced_accuracy = as.numeric(cm$byClass["Balanced Accuracy"]),
+            mcc = mcc
           ))
         }
       }
@@ -287,13 +321,45 @@ write.csv(feature_votes, "results/feature_selection_votes.csv", row.names = FALS
 
 # STEP 3: Train and evaluate every fold with the optimal predictor
 pred_log <- run_loso(optimal_feature)
-fold_metrics_all <- compute_fold_metrics(pred_log)
+fold_metrics_all <- compute_fold_metrics(pred_log, cm_dir = "results/confusion_matrices")
 write.csv(fold_metrics_all, "results/loso_fold_results.csv", row.names = FALSE)
+
+# Mean, SD and 95% CI (t-distribution, df = folds - 1) of each metric across LOSO folds
+metric_cols <- c("accuracy", "balanced_accuracy", "sensitivity", "specificity", "mcc")
+
+ci_bound <- function(x, side) {
+  x <- x[!is.na(x)]
+  mean(x) + side * qt(0.975, length(x) - 1) * sd(x) / sqrt(length(x))
+}
+
+fold_ci_table <- fold_metrics_all %>%
+  group_by(model, train_environment, test_environment) %>%
+  summarise(
+    n_folds = n(),
+    across(all_of(metric_cols),
+           list(mean = ~mean(.x, na.rm = TRUE),
+                sd = ~sd(.x, na.rm = TRUE),
+                ci_lower = ~ci_bound(.x, -1),
+                ci_upper = ~ci_bound(.x, 1)),
+           .names = "{.col}_{.fn}"),
+    .groups = "drop"
+  )
+
+# Keep the CI within the valid range of each metric (MCC: -1 to 1, others: 0 to 1)
+for (m in metric_cols) {
+  lower_limit <- if (m == "mcc") -1 else 0
+  fold_ci_table[[paste0(m, "_ci_lower")]] <- pmax(fold_ci_table[[paste0(m, "_ci_lower")]], lower_limit)
+  fold_ci_table[[paste0(m, "_ci_upper")]] <- pmin(fold_ci_table[[paste0(m, "_ci_upper")]], 1)
+}
+
+fold_ci_table <- fold_ci_table %>% mutate(across(where(is.numeric), ~round(.x, 4)))
+fold_ci_table
+write.csv(fold_ci_table, "results/loso_fold_ci.csv", row.names = FALSE)
 
 # Mean LOSO performance per model / training environment / test environment
 loso_summary <- fold_metrics_all %>%
   group_by(model, train_environment, test_environment) %>%
-  summarise(across(c(accuracy, sensitivity, specificity, f1_score, balanced_accuracy),
+  summarise(across(c(accuracy, sensitivity, specificity, f1_score, balanced_accuracy, mcc),
                    ~ round(mean(.x, na.rm = TRUE), 4)),
             .groups = "drop")
 
@@ -323,7 +389,7 @@ write.csv(ablation_fold_results, "results/ablation_fold_results.csv", row.names 
 # Mean performance per feature set / model / training environment / test environment
 ablation_summary <- ablation_fold_results %>%
   group_by(n_features, feature_set, model, train_environment, test_environment) %>%
-  summarise(across(c(accuracy, sensitivity, specificity, f1_score, balanced_accuracy),
+  summarise(across(c(accuracy, sensitivity, specificity, f1_score, balanced_accuracy, mcc),
                    ~ round(mean(.x, na.rm = TRUE), 4)),
             .groups = "drop") %>%
   arrange(n_features, factor(feature_set, levels = feature_set_names), model)
