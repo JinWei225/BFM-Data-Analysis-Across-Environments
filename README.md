@@ -5,9 +5,9 @@
 | File | Description |
 | --- | --- |
 | `Analysis_v1.0.0.R` | Statistical analysis (preprocessing → outlier removal → descriptive analysis → hypothesis testing → feature engineering). Saves the packet-level features to `data/bfm_packet_features.rds`. |
-| `Modelling_v1.0.0.R` | Leave-one-subject-out (LOSO) classification. Reads `data/bfm_packet_features.rds`, so `Analysis_v1.0.0.R` must be run first. |
-| `results` | Directory that stores the figures generated and final classification results: mean Accuracy / Sensitivity / Specificity for every (model, train environment, test environment) combination under leave-one-subject-out cross-validation. |
-| `data` | Directory that provides link and description for the public dataset used in the study. |
+| `Modelling_v1.0.0.R` | Data preprocessing, normalization, model training and evaluation using Leave-one-subject-out (LOSO) approach. Reads `data/bfm_packet_features.rds`, so `Analysis_v1.0.0.R` must be run first. |
+| `results` | Directory that stores the figures generated, statistical analysis and final classification results: mean Accuracy / Sensitivity / Specificity / F1-Score / Balanced Accuracy for every (model, train environment, test environment) combination under leave-one-subject-out cross-validation. |
+| `data` | Directory that provides link and description for the public dataset used in the study and contains packet-level features from `Analysis_v1.0.0.R`. |
 
 ---
 
@@ -20,14 +20,7 @@ R with the following packages:
 install.packages(c("lubridate", "ggplot2", "moments", "dunn.test", "car", "dplyr"))
 
 # Modelling_v1.0.0.R
-install.packages(c("dplyr", "tidyr", "caret", "rpart", "randomForest", "e1071"))
-```
-
-Run order:
-
-```r
-source("Analysis_v1.0.0.R")
-source("Modelling_v1.0.0.R")
+install.packages(c("dplyr", "ggplot2", "caret", "rpart", "randomForest", "e1071"))
 ```
 
 ---
@@ -53,15 +46,16 @@ source("Modelling_v1.0.0.R")
 
 `remove_outliers_iqr()` applies the standard IQR rule to `Mean_Magnitude` within
 each environment and retains rows at or above the lower fence
-(`Q1 − 1.5 × IQR`); the function reports the fence, the number of rows removed
-and the percentage dropped. Only the lower tail is trimmed, because the artefact
-of interest is drop-outs in reported magnitude. Histograms of all four features
-are plotted before and after cleaning for each environment.
+(`Q1 − 1.5 × IQR`). The rows dropped also helps to remove noise in the other three
+features. The code also reports the lower fence, the number of rows removed
+and the percentage dropped. Histograms of all four features
+are plotted before and after cleaning for each environment, which shows why
+only the lower tail is removed.
 
 ### 3.3 Descriptive analysis (`Analysis_v1.0.0.R`)
 
 - Per-environment row counts, activity proportions and per-subject counts /
-  proportions.
+  proportions in percentage.
 - Grouped bar chart of standing vs. walking counts across environments.
 - **Session-level aggregation**: each session is collapsed to a single row by
   averaging the four features (`mean_mag`, `std_mag`, `mean_pha`, `pha_coh`).
@@ -104,18 +98,21 @@ Spearman correlation heatmaps against the activity label.
 
 ### 3.7 Leave-one-subject-out (LOSO) classification (`Modelling_v1.0.0.R`)
 
-The single predictor is chosen by Spearman correlation in two steps:
+Previous multicollinearity checking shows that multicollinearity issue exists,
+so only one single predictor will be chosen.The single predictor is chosen by 
+voting from all folds using Spearman correlation in two steps:
 
 1. In each of the 15 training folds (5 held-out subjects × 3 training
    environments), the feature with the largest |Spearman ρ| with activity is
    selected (`feature_selection_per_fold.csv`). When k features tie, each
    receives 1/k of that fold's vote.
 2. The feature with the most votes across all folds is used as the predictor in
-   every fold (`feature_selection_votes.csv`). This is `var_roc_mean_mag`.
+   every fold (`feature_selection_votes.csv`). `var_roc_mean_mag` is actually 
+   chosen after voting.
 
-Four classifiers are evaluated, each using the min–max scaled
-`var_roc_mean_mag` as the sole predictor and `activity` (standing / walking) as
-the target:
+Four classifiers are evaluated without hyperparameter tuning, each using the 
+min–max scaled `var_roc_mean_mag` as the sole predictor and `activity` 
+(standing / walking) as the target:
 
 | Model | Implementation |
 | --- | --- |
@@ -166,6 +163,7 @@ five folds, giving 36 rows.
 | `specificity` | Specificity (standing correctly identified) |
 | `f1_score` | F1 score for the walking class (`NA` when no session is predicted as walking) |
 | `balanced_accuracy` | Mean of sensitivity and specificity |
+[ `mcc` | Matthews correlation coefficient |
 
 Rows where `train_environment == test_environment` are the within-environment
 LOSO results; the remaining rows are the cross-environment transfer results.

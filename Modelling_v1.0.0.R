@@ -43,6 +43,7 @@ lower_fence <- function(x) {
   unname(Q1 - 1.5 * IQR_val)
 }
 
+# Function to create session-level engineered features
 build_session_features <- function(packets) {
   packets %>%
     group_by(session_id, environment, activity, subject) %>%
@@ -60,15 +61,11 @@ build_session_features <- function(packets) {
     )
 }
 
-
+# Function to apply IQR-based filtering on each fold
 prepare_env_fold <- function(env, test_subject) {
   env_packets <- df[df$environment == env, ]
-  if (FENCE_MODE == "all") {
-    fence <- lower_fence(env_packets$Mean_Magnitude)
-  } else {
-    train_packets <- env_packets[env_packets$subject != test_subject, ]
-    fence <- lower_fence(train_packets$Mean_Magnitude)
-  }
+  train_packets <- env_packets[env_packets$subject != test_subject, ]
+  fence <- lower_fence(train_packets$Mean_Magnitude)
   keep <- env_packets$Mean_Magnitude >= fence
   removed <- env_packets$Mean_Magnitude < fence
   pct_removed <- tapply(removed, env_packets$subject, mean) * 100
@@ -166,8 +163,8 @@ run_loso <- function(features) {
 
 # Accuracy, sensitivity, specificity, F1, balanced accuracy and MCC for every
 # model / training environment / test environment / held-out subject
-# If cm_dir is given, the confusion matrix of every fold is also saved as a PNG
-compute_fold_metrics <- function(pred_log, cm_dir = NULL) {
+# The confusion matrix of every fold is also saved as a PNG
+compute_fold_metrics <- function(pred_log, cm_dir) {
   if (!is.null(cm_dir)) dir.create(cm_dir, recursive = TRUE, showWarnings = FALSE)
   fold_metrics_all <- data.frame()
 
@@ -256,6 +253,8 @@ for (test_subject in subjects) {
   }
 }
 
+# Table that shows percentage of data removed by IQR-based filtering
+# per activity per subject per environment
 removal_table <- do.call(rbind, lapply(subjects, function(s) {
   do.call(rbind, lapply(envs, function(e) {
     p <- fold_info[[s]]$removed[[e]]
@@ -270,6 +269,9 @@ removal_table <- do.call(rbind, lapply(subjects, function(s) {
 removal_table
 write.csv(removal_table, "results/removal_table.csv", row.names = FALSE)
 
+# Table that shows feature selection result per fold
+# When there are more than one feature have the highest rho, the first feature
+# count from left to right is chosen
 feature_selection_table <- do.call(rbind, lapply(subjects, function(s) {
   chosen <- fold_info[[s]]$chosen          # named list: one entry per training environment
   rho    <- fold_info[[s]]$rho
@@ -296,6 +298,7 @@ fold_votes <- do.call(rbind, lapply(subjects, function(s) {
   }))
 }))
 
+# Table that shows the votes and mean absolute rho for each feature
 feature_votes <- data.frame(
   feature = potential_features,
   votes = sapply(potential_features, function(f)
@@ -307,15 +310,9 @@ feature_votes <- data.frame(
       sapply(envs, function(e) abs(fold_info[[s]]$rho[[e]][f])))), 3)),
   row.names = NULL
 )
+
 feature_votes <- feature_votes[order(-feature_votes$votes, -feature_votes$mean_abs_rho), ]
-
-if (!is.null(FIXED_FEATURE)) {
-  optimal_feature <- FIXED_FEATURE
-} else {
-  optimal_feature <- feature_votes$feature[1]
-}
-
-feature_votes
+optimal_feature <- feature_votes$feature[1]
 cat("Optimal predictor used in every fold:", optimal_feature, "\n")
 write.csv(feature_votes, "results/feature_selection_votes.csv", row.names = FALSE)
 

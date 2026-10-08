@@ -247,6 +247,9 @@ nrow(df_foil_clean)
 nrow(df_nofoil_clean)
 
 # Categorical Variable Distribution
+# Number and proportion of data for per activity per environment
+sum(df_open_clean$activity == "standing")
+sum(df_open_clean$activity == "walking")
 sum(df_open_clean$activity == "standing") / nrow(df_open_clean)
 sum(df_open_clean$activity == "walking") / nrow(df_open_clean)
 
@@ -355,7 +358,6 @@ for (fidx in seq_along(session_features)) {
 # Levene's test (Equal of Variance)
 # H0: variances are equal across environments.
 # H1: at least one environment pair does not have equal variances
-# Required assumption for standard one-way ANOVA.
 
 cat("\n=== Levene's Test for Homogeneity of Variance (session-level) ===\n")
 for (fidx in seq_along(session_features)) {
@@ -598,6 +600,7 @@ session_engineered <- df_clean %>%
 eng_features <- c("var_roc_mean_mag", "var_roc_mean_pha", "var_roc_std_mag", "var_roc_pha_coh")
 eng_labels   <- c("Var_Roc(Mean_Mag)", "Var_Roc(Mean_Phase)", "Var_Roc(Std_Mag)", "Var_Roc(Phase_Coh)")
 
+# Violin + Boxplot for each engineered features
 for (env in environments) {
   session_engineered_env <- df_clean %>%
     filter(environment == env) %>%
@@ -666,6 +669,8 @@ for (env in environments) {
     
     both_normal <- sw_s$p.value > 0.05 && sw_w$p.value > 0.05
     
+    # Use Welch's t-test if the feature of both standing and walking are normal
+    # else use non-parametric test (Wilcoxon rank-sum)
     if (both_normal) {
       tt <- t.test(x_stand, x_walk, var.equal = FALSE)
       cat(sprintf("Welch's t-test        : t = %.4f, df = %.2f, p = %.4f\n",
@@ -678,7 +683,7 @@ for (env in environments) {
   }
 }
 
-# Variance Inflation Factor (VIF)
+# Variance Inflation Factor (VIF) for multicollinearity checking
 vif_model <- lm(activity_num ~ var_roc_mean_mag + var_roc_mean_pha + var_roc_std_mag + var_roc_pha_coh, data = session_engineered)
 
 vif_values <- vif(vif_model)
