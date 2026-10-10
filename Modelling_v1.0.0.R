@@ -163,8 +163,9 @@ run_loso <- function(features) {
 
 # Accuracy, sensitivity, specificity, F1, balanced accuracy and MCC for every
 # model / training environment / test environment / held-out subject
-# The confusion matrix of every fold is also saved as a PNG
-compute_fold_metrics <- function(pred_log, cm_dir) {
+# The confusion matrix of every fold is also saved as a PNG when cm_dir is given
+# (cm_dir = NULL skips the plots, e.g. for the ablation study)
+compute_fold_metrics <- function(pred_log, cm_dir = NULL) {
   if (!is.null(cm_dir)) dir.create(cm_dir, recursive = TRUE, showWarnings = FALSE)
   fold_metrics_all <- data.frame()
 
