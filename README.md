@@ -6,28 +6,72 @@
 | --- | --- |
 | `Analysis_v1.0.0.R` | Statistical analysis (preprocessing → outlier removal → descriptive analysis → hypothesis testing → feature engineering). Saves the packet-level features to `data/bfm_packet_features.rds`. |
 | `Modelling_v1.0.0.R` | Data preprocessing, normalization, model training and evaluation using Leave-one-subject-out (LOSO) approach. Reads `data/bfm_packet_features.rds`, so `Analysis_v1.0.0.R` must be run first. |
-| `results` | Directory that stores the figures generated, statistical analysis and final classification results: mean Accuracy / Sensitivity / Specificity / F1-Score / Balanced Accuracy for every (model, train environment, test environment) combination under leave-one-subject-out cross-validation. |
+| `results` | Directory that stores the figures, statistical test results, LOSO classification results (accuracy, sensitivity, specificity, F1-score, balanced accuracy and MCC per fold, plus mean, SD and 95% CI over folds), confusion matrices and ablation study results. See [`results/README.md`](results/README.md) for a description of every file and the supplementary tables referred to in the paper. |
 | `data` | Directory that provides link and description for the public dataset used in the study and contains packet-level features from `Analysis_v1.0.0.R`. |
+
+### Supplementary tables
+
+The following tables are not in the paper because of the page limit. They are in
+[`results/README.md`](results/README.md):
+
+| Table | Section in `results/README.md` |
+| --- | --- |
+| Hyperparameters of every model | [2. Model hyperparameters](results/README.md#2-model-hyperparameters) |
+| IQR lower fence and % of packets removed per subject in every LOSO fold | [3. IQR-based filtering per LOSO fold](results/README.md#3-iqr-based-filtering-per-loso-fold) |
+| Dunn's post-hoc pairwise comparisons per subject | [4. Dunn's post-hoc comparisons per subject](results/README.md#4-dunns-post-hoc-comparisons-per-subject) |
+| Standard deviation and 95% CI of the LOSO metrics | [5. LOSO results with SD and 95% CI](results/README.md#5-loso-results-with-standard-deviation-and-95-confidence-interval) |
+| Ablation study over all 15 feature combinations | [6. Ablation study](results/README.md#6-ablation-study) |
+| Confusion matrix of every LOSO fold | [7. Confusion matrices](results/README.md#7-confusion-matrices) |
 
 ---
 
 ## 2. Software requirements
 
-R with the following packages:
+R (tested with R 4.3.3) with the following packages:
 
 ```r
 # Analysis_v1.0.0.R
 install.packages(c("lubridate", "ggplot2", "moments", "dunn.test", "car", "dplyr"))
 
 # Modelling_v1.0.0.R
-install.packages(c("dplyr", "ggplot2", "caret", "rpart", "randomForest", "e1071"))
+install.packages(c("dplyr", "tidyr", "ggplot2", "caret", "rpart", "randomForest", "e1071"))
 ```
+
+> **Note on `dunn.test` version.** In `dunn.test` 1.4.2 (released October 2026),
+> passing the grouping variable as a character vector returns pairwise z-statistics
+> and p-values that do not match the environment pairs they are labelled with.
+> `Analysis_v1.0.0.R` therefore passes the group as a factor
+> (`dunn.test(sub[[feat]], factor(sub$environment), ...)`). This gives the same
+> `results/dunn_per_subject.csv` with `dunn.test` 1.3.6, 1.3.7 and 1.4.2, and it matches
+> a manual calculation of Dunn's test.
 
 ---
 
-## 3. Pipeline overview
+## 3. Running the code
 
-### 3.1 Preprocessing (`Analysis_v1.0.0.R`)
+1. Download `bfm_data.csv` (see [`data/README.md`](data/README.md)) and place it
+   in the repository root.
+2. Run `Analysis_v1.0.0.R` with the repository root as the working directory. It
+   writes `data/bfm_packet_features.rds`, the figures and the statistical test
+   tables to `results/`.
+3. Run `Modelling_v1.0.0.R`. It reads `data/bfm_packet_features.rds` and writes the
+   feature selection, LOSO, confidence interval, ablation and confusion matrix
+   outputs to `results/`.
+
+```bash
+Rscript Analysis_v1.0.0.R
+Rscript Modelling_v1.0.0.R
+```
+
+Each script took about 1–2 minutes in our test. Because the random seed is fixed
+at 42, re-running both scripts reproduces every CSV file in `results/` and the values
+reported in Tables I–IV of the paper.
+
+---
+
+## 4. Pipeline overview
+
+### 4.1 Preprocessing (`Analysis_v1.0.0.R`)
 
 1. Missing-value check across all columns.
 2. Timestamps converted from UTC to `Asia/Kuala_Lumpur` (MYT, UTC+08:00).
@@ -42,7 +86,7 @@ install.packages(c("dplyr", "ggplot2", "caret", "rpart", "randomForest", "e1071"
    features are saved to `data/bfm_packet_features.rds` for `Modelling_v1.0.0.R`;
    the data are split by environment into `df_open`, `df_foil`, `df_nofoil`.
 
-### 3.2 Outlier removal (`Analysis_v1.0.0.R`)
+### 4.2 Outlier removal (`Analysis_v1.0.0.R`)
 
 `remove_outliers_iqr()` applies the standard IQR rule to `Mean_Magnitude` within
 each environment and retains rows at or above the lower fence
@@ -52,7 +96,13 @@ and the percentage dropped. Histograms of all four features
 are plotted before and after cleaning for each environment, which shows why
 only the lower tail is removed.
 
-### 3.3 Descriptive analysis (`Analysis_v1.0.0.R`)
+This cleaning, with one fence per environment computed from all subjects, is used
+only for the descriptive analysis and hypothesis testing. For modelling, the IQR
+filtering is done again on the original uncleaned data inside every LOSO fold
+(see 4.7). The fences and percentages removed at both stages are tabulated in
+[`results/README.md` §3](results/README.md#3-iqr-based-filtering-per-loso-fold).
+
+### 4.3 Descriptive analysis (`Analysis_v1.0.0.R`)
 
 - Per-environment row counts, activity proportions and per-subject counts /
   proportions in percentage.
@@ -64,7 +114,7 @@ only the lower tail is removed.
 - `describe_features()` produces the mean, median, standard deviation, skewness
   and kurtosis tables reported per environment.
 
-### 3.4 Assumption checks and hypothesis testing (`Analysis_v1.0.0.R`)
+### 4.4 Assumption checks and hypothesis testing (`Analysis_v1.0.0.R`)
 
 - **Shapiro–Wilk** normality test per feature per environment.
 - **Levene's test** for homogeneity of variance across environments.
@@ -74,17 +124,19 @@ only the lower tail is removed.
   test is run **within each subject** (10 sessions per environment), with Holm
   correction across subjects and epsilon-squared as the effect size. It is
   followed by **Dunn's post-hoc** pairwise comparisons per subject with
-  Bonferroni correction (`kruskal_wallis_per_subject.csv`, `dunn_per_subject.csv`).
+  Bonferroni correction (`kruskal_wallis_per_subject.csv`, `dunn_per_subject.csv`;
+  the Dunn results are tabulated in
+  [`results/README.md` §4](results/README.md#4-dunns-post-hoc-comparisons-per-subject)).
 - Standing vs. walking is compared within each environment using
   **Wilcoxon rank-sum** tests, accompanied by violin + box plots.
 
-### 3.5 Time-series inspection (`Analysis_v1.0.0.R`)
+### 4.5 Time-series inspection (`Analysis_v1.0.0.R`)
 
 For each session, a 60-second window centred on the session midpoint is
 extracted and all four features are plotted against relative time, faceted by
 environment and coloured by activity.
 
-### 3.6 Feature engineering (`Analysis_v1.0.0.R`)
+### 4.6 Feature engineering (`Analysis_v1.0.0.R`)
 
 Four session-level dynamic features are computed:
 
@@ -96,10 +148,10 @@ then Welch's t-test or Wilcoxon rank-sum depending on normality), screened for
 multicollinearity with the **variance inflation factor**, and visualised as
 Spearman correlation heatmaps against the activity label.
 
-### 3.7 Leave-one-subject-out (LOSO) classification (`Modelling_v1.0.0.R`)
+### 4.7 Leave-one-subject-out (LOSO) classification (`Modelling_v1.0.0.R`)
 
 Previous multicollinearity checking shows that multicollinearity issue exists,
-so only one single predictor will be chosen.The single predictor is chosen by 
+so only one single predictor will be chosen. The single predictor is chosen by
 voting from all folds using Spearman correlation in two steps:
 
 1. In each of the 15 training folds (5 held-out subjects × 3 training
@@ -107,12 +159,14 @@ voting from all folds using Spearman correlation in two steps:
    selected (`feature_selection_per_fold.csv`). When k features tie, each
    receives 1/k of that fold's vote.
 2. The feature with the most votes across all folds is used as the predictor in
-   every fold (`feature_selection_votes.csv`). `var_roc_mean_mag` is actually 
-   chosen after voting.
+   every fold (`feature_selection_votes.csv`). `var_roc_mean_mag` is chosen
+   after voting (5.75 votes, mean |ρ| = 0.760).
 
-Four classifiers are evaluated without hyperparameter tuning, each using the 
-min–max scaled `var_roc_mean_mag` as the sole predictor and `activity` 
-(standing / walking) as the target:
+Four classifiers are evaluated without hyperparameter tuning, each using the
+min–max scaled `var_roc_mean_mag` as the sole predictor and `activity`
+(standing / walking) as the target. Walking is the positive class (1) and standing
+the negative class (0); a session is predicted as walking when its predicted
+probability is greater than 0.5. The random seed is set to 42.
 
 | Model | Implementation |
 | --- | --- |
@@ -120,6 +174,10 @@ min–max scaled `var_roc_mean_mag` as the sole predictor and `activity`
 | Decision Tree | `rpart(..., method = "class")` |
 | Random Forest | `randomForest(..., ntree = 100)` |
 | SVM | `e1071::svm(..., kernel = "radial", probability = TRUE)` |
+
+All other hyperparameters are left at their package defaults. The full list for every
+model is in
+[`results/README.md` §2](results/README.md#2-model-hyperparameters).
 
 A single loop covers every ordered pair of training and testing environments,
 **including the matched pairs where the two are the same**. In each fold the
@@ -133,18 +191,31 @@ test information leaks into training:
   saved to `removal_table.csv`.
 - Min–max scaling is fitted on the training fold and applied to the test fold
   with the training fold's min/max.
+- Feature selection (Spearman ρ) uses only the training subjects' sessions of
+  each fold.
 
-### 3.8 Ablation study (`Modelling_v1.0.0.R`)
+For every (model, training environment, testing environment, held-out subject)
+the script computes accuracy, sensitivity, specificity, F1-score, balanced accuracy
+and the Matthews correlation coefficient (MCC), giving 180 fold-level evaluations. It
+also saves a confusion matrix plot for each fold, and the mean, standard deviation and
+95% confidence interval of each metric over the five folds (`loso_fold_ci.csv`,
+tabulated in
+[`results/README.md` §5](results/README.md#5-loso-results-with-standard-deviation-and-95-confidence-interval)).
+When a model predicts no session as walking (sensitivity = 0), F1 is `NA` and MCC
+is set to 0.
+
+### 4.8 Ablation study (`Modelling_v1.0.0.R`)
 
 Every non-empty subset of the four candidate features (4 single features,
 6 pairs, 4 triples and all four together = 15 feature sets) is evaluated with
-the same LOSO folds, outlier fences, scaling and models as in 3.7. No feature
+the same LOSO folds, outlier fences, scaling and models as in 4.7. No feature
 selection is done; each subset is used as given. The ablation results are
-provided in this repository only and are not reported in the paper.
+provided in this repository only and are not reported in the paper. A summary
+table is in [`results/README.md` §6](results/README.md#6-ablation-study).
 
 ---
 
-## 4. Results files
+## 5. Results files
 
 `loso_fold_results.csv` has one row per (model, train environment, test
 environment, held-out subject): 4 models × 3 training environments × 3 testing
@@ -163,7 +234,7 @@ five folds, giving 36 rows.
 | `specificity` | Specificity (standing correctly identified) |
 | `f1_score` | F1 score for the walking class (`NA` when no session is predicted as walking) |
 | `balanced_accuracy` | Mean of sensitivity and specificity |
-[ `mcc` | Matthews correlation coefficient |
+| `mcc` | Matthews correlation coefficient (set to 0 when undefined) |
 
 Rows where `train_environment == test_environment` are the within-environment
 LOSO results; the remaining rows are the cross-environment transfer results.
@@ -172,9 +243,16 @@ Other files written by `Modelling_v1.0.0.R`:
 
 | File | Contents |
 | --- | --- |
+| `loso_fold_ci.csv` | Mean, standard deviation and 95% confidence interval (t-distribution, 4 df) of accuracy, balanced accuracy, sensitivity, specificity and MCC over the five folds |
+| `confusion_matrices/` | Confusion matrix plot of each of the 180 folds, `cm_<Model>_<trainEnv>_<testEnv>_<heldOutSubject>.png` |
 | `removal_table.csv` | Lower fence and percentage of packets removed per subject, for every held-out subject and environment |
 | `feature_selection_per_fold.csv` | Spearman ρ of each feature and the selected (or tied) feature(s) in each training fold |
 | `feature_selection_votes.csv` | Split votes per feature across the 15 training folds |
 | `ablation_fold_results.csv` | Same as `loso_fold_results.csv` for every feature set, with `n_features` and `feature_set` columns |
 | `ablation_summary.csv` | Same as `loso_summary.csv` for every feature set |
 | `ablation_overview.csv` | Mean accuracy within the training environment (`accuracy_within_env`) and across environments (`accuracy_cross_env`) per feature set and model |
+
+`Analysis_v1.0.0.R` also writes `sessions_per_subject.csv`,
+`kruskal_wallis_per_subject.csv`, `dunn_per_subject.csv` and the `figures/`
+folder. A description of every file in `results/` is in
+[`results/README.md` §1](results/README.md#1-files-in-this-folder).

@@ -403,8 +403,10 @@ for (fidx in seq_along(session_features)) {
     ))
 
     # Dunn's post-hoc pairwise comparisons (Bonferroni, two-sided p-values)
+    # The group is passed as a factor: with a character vector, dunn.test 1.4.2
+    # returns z-statistics that do not match the labelled environment pairs
     invisible(capture.output(
-      dn <- dunn.test(sub[[feat]], sub$environment, method = "bonferroni",
+      dn <- dunn.test(sub[[feat]], factor(sub$environment), method = "bonferroni",
                       kw = FALSE, table = FALSE, altp = TRUE)
     ))
     dunn_subject_results <- rbind(dunn_subject_results, data.frame(
